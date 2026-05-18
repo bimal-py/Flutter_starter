@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_starter/modules/notifications/domain/entity/notification_channels.dart';
-import 'package:flutter_starter/modules/notifications/domain/entity/notification_payload.dart';
-import 'package:flutter_starter/modules/notifications/domain/entity/notification_permissions.dart';
+import 'package:flutter_starter/modules/notifications/domain/entity/notification_channels_entity.dart';
+import 'package:flutter_starter/modules/notifications/domain/entity/notification_payload_entity.dart';
+import 'package:flutter_starter/modules/notifications/domain/entity/notification_permission_status_entity.dart';
 import 'package:flutter_starter/modules/notifications/domain/repository/local/notification_provider.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -14,19 +14,19 @@ class FlutterLocalNotificationsProviderImpl implements NotificationProvider {
   FlutterLocalNotificationsProviderImpl();
 
   final _plugin = FlutterLocalNotificationsPlugin();
-  final _tapController = StreamController<NotificationTapEvent>.broadcast();
+  final _tapController = StreamController<NotificationTapEventEntity>.broadcast();
   bool _initialized = false;
 
   @override
   bool get isInitialized => _initialized;
 
   @override
-  Stream<NotificationTapEvent> get onTap => _tapController.stream;
+  Stream<NotificationTapEventEntity> get onTap => _tapController.stream;
 
   @override
   Future<void> initialize({
-    List<NotificationChannel> channels = const [],
-    NotificationTapHandler? onLaunch,
+    List<NotificationChannelEntity> channels = const [],
+    NotificationTapHandlerEntity? onLaunch,
   }) async {
     if (_initialized) return;
 
@@ -44,9 +44,11 @@ class FlutterLocalNotificationsProviderImpl implements NotificationProvider {
     );
 
     if (Platform.isAndroid) {
-      final android = _plugin.resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>();
-      for (final ch in [...NotificationChannels.defaults, ...channels]) {
+      final android = _plugin
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >();
+      for (final ch in [...NotificationChannelsEntity.defaults, ...channels]) {
         await android?.createNotificationChannel(_toAndroidChannel(ch));
       }
     }
@@ -64,7 +66,7 @@ class FlutterLocalNotificationsProviderImpl implements NotificationProvider {
   }
 
   @override
-  Future<void> show(NotificationPayload payload) async {
+  Future<void> show(NotificationPayloadEntity payload) async {
     await _plugin.show(
       payload.id,
       payload.title,
@@ -81,7 +83,7 @@ class FlutterLocalNotificationsProviderImpl implements NotificationProvider {
   }
 
   @override
-  Future<void> schedule(NotificationPayload payload, DateTime when) async {
+  Future<void> schedule(NotificationPayloadEntity payload, DateTime when) async {
     await _plugin.zonedSchedule(
       payload.id,
       payload.title,
@@ -106,45 +108,52 @@ class FlutterLocalNotificationsProviderImpl implements NotificationProvider {
   Future<void> cancelAll() => _plugin.cancelAll();
 
   @override
-  Future<NotificationPermissionStatus> requestPermissions() async {
+  Future<NotificationPermissionStatusEntity> requestPermissions() async {
     if (Platform.isIOS) {
-      final ios = _plugin.resolvePlatformSpecificImplementation<
-          IOSFlutterLocalNotificationsPlugin>();
-      final granted = await ios?.requestPermissions(
+      final ios = _plugin
+          .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin
+          >();
+      final granted =
+          await ios?.requestPermissions(
             alert: true,
             badge: true,
             sound: true,
           ) ??
           false;
       return granted
-          ? NotificationPermissionStatus.granted
-          : NotificationPermissionStatus.denied;
+          ? NotificationPermissionStatusEntity.granted
+          : NotificationPermissionStatusEntity.denied;
     }
     if (Platform.isAndroid) {
-      final android = _plugin.resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>();
+      final android = _plugin
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >();
       final granted = await android?.requestNotificationsPermission() ?? false;
       return granted
-          ? NotificationPermissionStatus.granted
-          : NotificationPermissionStatus.denied;
+          ? NotificationPermissionStatusEntity.granted
+          : NotificationPermissionStatusEntity.denied;
     }
-    return NotificationPermissionStatus.granted;
+    return NotificationPermissionStatusEntity.granted;
   }
 
   @override
-  Future<NotificationPermissionStatus> permissionStatus() async {
+  Future<NotificationPermissionStatusEntity> permissionStatus() async {
     if (Platform.isAndroid) {
-      final android = _plugin.resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>();
+      final android = _plugin
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >();
       final enabled = await android?.areNotificationsEnabled() ?? false;
       return enabled
-          ? NotificationPermissionStatus.granted
-          : NotificationPermissionStatus.denied;
+          ? NotificationPermissionStatusEntity.granted
+          : NotificationPermissionStatusEntity.denied;
     }
-    return NotificationPermissionStatus.notDetermined;
+    return NotificationPermissionStatusEntity.notDetermined;
   }
 
-  NotificationDetails _platformDetails(NotificationPayload p) {
+  NotificationDetails _platformDetails(NotificationPayloadEntity p) {
     final android = AndroidNotificationDetails(
       p.channel,
       p.channel,
@@ -152,11 +161,13 @@ class FlutterLocalNotificationsProviderImpl implements NotificationProvider {
       priority: _toAndroidPriority(p.priority),
       playSound: p.sound,
       actions: p.actions
-          .map((a) => AndroidNotificationAction(
-                a.id,
-                a.label,
-                cancelNotification: !a.foreground,
-              ))
+          .map(
+            (a) => AndroidNotificationAction(
+              a.id,
+              a.label,
+              cancelNotification: !a.foreground,
+            ),
+          )
           .toList(),
     );
     final ios = DarwinNotificationDetails(
@@ -166,7 +177,7 @@ class FlutterLocalNotificationsProviderImpl implements NotificationProvider {
     return NotificationDetails(android: android, iOS: ios);
   }
 
-  AndroidNotificationChannel _toAndroidChannel(NotificationChannel ch) =>
+  AndroidNotificationChannel _toAndroidChannel(NotificationChannelEntity ch) =>
       AndroidNotificationChannel(
         ch.id,
         ch.name,
@@ -177,40 +188,41 @@ class FlutterLocalNotificationsProviderImpl implements NotificationProvider {
       );
 
   Importance _toAndroidImportance(NotificationPriority p) => switch (p) {
-        NotificationPriority.min => Importance.min,
-        NotificationPriority.low => Importance.low,
-        NotificationPriority.normal => Importance.defaultImportance,
-        NotificationPriority.high => Importance.high,
-        NotificationPriority.max => Importance.max,
-      };
+    NotificationPriority.min => Importance.min,
+    NotificationPriority.low => Importance.low,
+    NotificationPriority.normal => Importance.defaultImportance,
+    NotificationPriority.high => Importance.high,
+    NotificationPriority.max => Importance.max,
+  };
 
   Priority _toAndroidPriority(NotificationPriority p) => switch (p) {
-        NotificationPriority.min => Priority.min,
-        NotificationPriority.low => Priority.low,
-        NotificationPriority.normal => Priority.defaultPriority,
-        NotificationPriority.high => Priority.high,
-        NotificationPriority.max => Priority.max,
-      };
+    NotificationPriority.min => Priority.min,
+    NotificationPriority.low => Priority.low,
+    NotificationPriority.normal => Priority.defaultPriority,
+    NotificationPriority.high => Priority.high,
+    NotificationPriority.max => Priority.max,
+  };
 
   void _handleResponse(NotificationResponse response) {
     final event = _decodeResponse(response);
     if (event != null) _tapController.add(event);
   }
 
-  NotificationTapEvent? _decodeResponse(NotificationResponse response) {
+  NotificationTapEventEntity? _decodeResponse(NotificationResponse response) {
     final raw = response.payload;
     if (raw == null) return null;
     try {
       final decoded = jsonDecode(raw) as Map<String, dynamic>;
-      final payload = NotificationPayload(
+      final payload = NotificationPayloadEntity(
         id: decoded['id'] as int? ?? 0,
         title: decoded['title'] as String? ?? '',
         body: decoded['body'] as String? ?? '',
         data: Map<String, dynamic>.from(decoded['data'] as Map? ?? {}),
         channel:
-            decoded['channel'] as String? ?? NotificationChannels.defaultChannelId,
+            decoded['channel'] as String? ??
+            NotificationChannelsEntity.defaultChannelId,
       );
-      return NotificationTapEvent(
+      return NotificationTapEventEntity(
         payload: payload,
         actionId: response.actionId,
       );
