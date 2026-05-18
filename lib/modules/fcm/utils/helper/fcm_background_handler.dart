@@ -4,7 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_starter/modules/fcm/integrations/notifications_bridge.dart';
+import 'package:flutter_starter/modules/fcm/utils/helper/notifications_bridge.dart';
 import 'package:flutter_starter/modules/notifications/notifications.dart';
 
 /// Minimal background handler — initializes Firebase in the background isolate
@@ -61,7 +61,7 @@ Future<void> fcmBackgroundDisplayHandler(RemoteMessage message) async {
   );
 
   final channel = data['channel']?.toString() ??
-      NotificationChannels.defaultChannelId;
+      NotificationChannelsEntity.defaultChannelId;
   final actions = parseFcmActions(data['actions']);
   final id =
       (message.messageId?.hashCode ?? DateTime.now().millisecondsSinceEpoch) &

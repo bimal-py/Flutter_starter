@@ -10,7 +10,7 @@ class _AuthInitialCheckRequested extends AuthEvent {
 
 class _AuthUserChanged extends AuthEvent {
   const _AuthUserChanged(this.user);
-  final AuthUser? user;
+  final AuthUserEntity? user;
 }
 
 class _AuthLoginRequested extends AuthEvent {
