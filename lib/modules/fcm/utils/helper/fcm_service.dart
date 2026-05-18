@@ -4,7 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_starter/core/core.dart';
-import 'package:flutter_starter/modules/fcm/domain/entity/fcm_remote_message.dart';
+import 'package:flutter_starter/modules/fcm/domain/entity/fcm_remote_message_entity.dart';
 import 'package:flutter_starter/modules/fcm/utils/constants/fcm_constants.dart';
 import 'package:flutter_starter/modules/fcm/utils/helper/storage_helper/fcm_secure_storage.dart';
 
@@ -27,8 +27,8 @@ class FcmService {
   StreamSubscription<RemoteMessage>? _onOpenedAppSub;
 
   Future<void> initialize({
-    void Function(FcmRemoteMessage)? onForegroundMessage,
-    void Function(FcmRemoteMessage)? onMessageOpenedApp,
+    void Function(FcmRemoteMessageEntity)? onForegroundMessage,
+    void Function(FcmRemoteMessageEntity)? onMessageOpenedApp,
     bool requestPermissionOnInit = false,
     List<String> defaultTopics = FcmConstants.defaultTopics,
   }) async {
@@ -45,12 +45,12 @@ class FcmService {
 
     if (onForegroundMessage != null) {
       _onMessageSub = FirebaseMessaging.onMessage.listen(
-        (m) => onForegroundMessage(FcmRemoteMessage.fromRemoteMessage(m)),
+        (m) => onForegroundMessage(FcmRemoteMessageEntity.fromRemoteMessage(m)),
       );
     }
     if (onMessageOpenedApp != null) {
       _onOpenedAppSub = FirebaseMessaging.onMessageOpenedApp.listen(
-        (m) => onMessageOpenedApp(FcmRemoteMessage.fromRemoteMessage(m)),
+        (m) => onMessageOpenedApp(FcmRemoteMessageEntity.fromRemoteMessage(m)),
       );
     }
 
@@ -166,23 +166,23 @@ class FcmService {
 
   Future<void> clearTokenSyncCache() => _storage.clearTokenSyncCache();
 
-  Stream<FcmRemoteMessage> get onMessage => isSupported
-      ? FirebaseMessaging.onMessage.map(FcmRemoteMessage.fromRemoteMessage)
+  Stream<FcmRemoteMessageEntity> get onMessage => isSupported
+      ? FirebaseMessaging.onMessage.map(FcmRemoteMessageEntity.fromRemoteMessage)
       : const Stream.empty();
 
-  Stream<FcmRemoteMessage> get onMessageOpenedApp => isSupported
+  Stream<FcmRemoteMessageEntity> get onMessageOpenedApp => isSupported
       ? FirebaseMessaging.onMessageOpenedApp.map(
-          FcmRemoteMessage.fromRemoteMessage,
+          FcmRemoteMessageEntity.fromRemoteMessage,
         )
       : const Stream.empty();
 
   Stream<String> get onTokenRefresh =>
       isSupported ? _messaging.onTokenRefresh : const Stream.empty();
 
-  Future<FcmRemoteMessage?> getInitialMessage() async {
+  Future<FcmRemoteMessageEntity?> getInitialMessage() async {
     if (!isSupported) return null;
     final m = await _messaging.getInitialMessage();
-    return m == null ? null : FcmRemoteMessage.fromRemoteMessage(m);
+    return m == null ? null : FcmRemoteMessageEntity.fromRemoteMessage(m);
   }
 
   FcmPermissionStatus _mapAuthorizationStatus(AuthorizationStatus s) =>

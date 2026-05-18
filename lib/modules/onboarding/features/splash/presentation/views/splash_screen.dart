@@ -42,9 +42,9 @@ class _SplashView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Spacer(),
-                const SplashLogo(),
+                const SplashLogoWidget(),
                 const Spacer(),
-                const SplashProgress(),
+                const SplashProgressWidget(),
                 SizedBox(height: 24.h),
               ],
             ),

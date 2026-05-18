@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_starter/common/common.dart';
 import 'package:flutter_starter/core/core.dart';
-import 'package:flutter_starter/modules/device_info/presentation/cubit/cubit.dart';
+import 'package:flutter_starter/modules/device_info/presentation/bloc/device_info/device_info_cubit.dart';
 
 class DeviceInfoScreen extends StatelessWidget {
   const DeviceInfoScreen({super.key});
@@ -26,7 +26,7 @@ class DeviceInfoScreen extends StatelessWidget {
               separatorBuilder: (_, _) => const Divider(height: 1),
               itemBuilder: (_, i) {
                 final e = entries[i];
-                return InfoRowTile(label: e.key, value: '${e.value}');
+                return InfoRowTileWidget(label: e.key, value: '${e.value}');
               },
             );
           },

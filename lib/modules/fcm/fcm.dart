@@ -14,5 +14,4 @@
 library;
 
 export 'domain/domain.dart';
-export 'integrations/integrations.dart';
 export 'utils/utils.dart';

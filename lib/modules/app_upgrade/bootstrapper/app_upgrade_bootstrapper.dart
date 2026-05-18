@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_starter/core/router/app_router.dart';
 import 'package:flutter_starter/core/router/routes.dart';
-import 'package:flutter_starter/modules/app_upgrade/presentation/cubit/app_upgrade_cubit.dart';
+import 'package:flutter_starter/modules/app_upgrade/presentation/bloc/app_upgrade/app_upgrade_cubit.dart';
 import 'package:flutter_starter/modules/app_upgrade/presentation/widgets/update_app_popup_widget.dart';
 
 /// Wraps the app shell, kicks off [AppUpgradeCubit.checkForUpdate] after the
