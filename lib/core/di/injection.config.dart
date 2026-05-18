@@ -110,8 +110,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i719.ResetPasswordUseCase>(
       () => _i719.ResetPasswordUseCase(gh<_i446.AuthRepository>()),
     );
-    gh.factory<_i69.WatchAuthUserUseCase>(
-      () => _i69.WatchAuthUserUseCase(gh<_i446.AuthRepository>()),
+    gh.factory<_i69.WatchAuthUserEntityUseCase>(
+      () => _i69.WatchAuthUserEntityUseCase(gh<_i446.AuthRepository>()),
     );
     return this;
   }
