@@ -1,7 +1,4 @@
-import 'package:flutter_starter/modules/app_upgrade/domain/entity/app_upgrade_info_entity.dart';
-import 'package:flutter_starter/modules/app_upgrade/domain/repository/remote/app_upgrade_repository.dart';
-import 'package:flutter_starter/modules/app_upgrade/utils/remote_config_helper.dart';
-import 'package:flutter_starter/modules/app_upgrade/utils/remote_config_service.dart';
+import 'package:flutter_starter/modules/app_upgrade/app_upgrade.dart';
 import 'package:injectable/injectable.dart';
 
 @LazySingleton(as: AppUpgradeRepository)
@@ -9,8 +6,8 @@ class RemoteConfigUpgradeRepositoryImpl implements AppUpgradeRepository {
   RemoteConfigUpgradeRepositoryImpl({
     RemoteConfigService? service,
     RemoteConfigHelper? helper,
-  })  : _service = service ?? RemoteConfigService.instance,
-        _helper = helper ?? RemoteConfigHelper();
+  }) : _service = service ?? RemoteConfigService.instance,
+       _helper = helper ?? RemoteConfigHelper();
 
   final RemoteConfigService _service;
   final RemoteConfigHelper _helper;
