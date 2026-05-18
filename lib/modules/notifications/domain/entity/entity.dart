@@ -1,3 +1,3 @@
-export 'notification_channels.dart';
-export 'notification_payload.dart';
-export 'notification_permissions.dart';
+export 'notification_channels_entity.dart';
+export 'notification_payload_entity.dart';
+export 'notification_permission_status_entity.dart';

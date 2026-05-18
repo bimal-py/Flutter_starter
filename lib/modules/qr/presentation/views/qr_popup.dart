@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_starter/core/core.dart';
-import 'package:flutter_starter/modules/qr/utils/services/qr_capture_service.dart';
+import 'package:flutter_starter/modules/qr/utils/helper/qr_capture_service.dart';
 import 'package:flutter_starter/modules/qr/presentation/widgets/qr_image_widget.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 

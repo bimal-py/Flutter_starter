@@ -1,6 +1,6 @@
-import 'package:flutter_starter/modules/notifications/domain/entity/notification_channels.dart';
-import 'package:flutter_starter/modules/notifications/domain/entity/notification_payload.dart';
-import 'package:flutter_starter/modules/notifications/domain/entity/notification_permissions.dart';
+import 'package:flutter_starter/modules/notifications/domain/entity/notification_channels_entity.dart';
+import 'package:flutter_starter/modules/notifications/domain/entity/notification_payload_entity.dart';
+import 'package:flutter_starter/modules/notifications/domain/entity/notification_permission_status_entity.dart';
 
 /// Plugin-agnostic notifications backend. The default app wires
 /// [FlutterLocalNotificationsProvider]; swap by implementing this interface
@@ -10,17 +10,17 @@ abstract class NotificationProvider {
   bool get isInitialized;
 
   Future<void> initialize({
-    List<NotificationChannel> channels = const [],
-    NotificationTapHandler? onLaunch,
+    List<NotificationChannelEntity> channels = const [],
+    NotificationTapHandlerEntity? onLaunch,
   });
 
-  Future<void> show(NotificationPayload payload);
-  Future<void> schedule(NotificationPayload payload, DateTime when);
+  Future<void> show(NotificationPayloadEntity payload);
+  Future<void> schedule(NotificationPayloadEntity payload, DateTime when);
   Future<void> cancel(int id);
   Future<void> cancelAll();
 
-  Stream<NotificationTapEvent> get onTap;
+  Stream<NotificationTapEventEntity> get onTap;
 
-  Future<NotificationPermissionStatus> requestPermissions();
-  Future<NotificationPermissionStatus> permissionStatus();
+  Future<NotificationPermissionStatusEntity> requestPermissions();
+  Future<NotificationPermissionStatusEntity> permissionStatus();
 }

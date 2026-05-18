@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_starter/common/common.dart';
 import 'package:flutter_starter/core/core.dart';
-import 'package:flutter_starter/modules/package_info/cubit/cubit.dart';
+import 'package:flutter_starter/modules/package_info/presentation/bloc/package_info/package_info_cubit.dart';
 
 class PackageInfoScreen extends StatelessWidget {
   const PackageInfoScreen({super.key});
@@ -30,7 +30,7 @@ class PackageInfoScreen extends StatelessWidget {
               itemCount: rows.length,
               separatorBuilder: (_, _) => const Divider(height: 1),
               itemBuilder: (_, i) =>
-                  InfoRowTile(label: rows[i].$1, value: rows[i].$2),
+                  InfoRowTileWidget(label: rows[i].$1, value: rows[i].$2),
             );
           },
         ),
