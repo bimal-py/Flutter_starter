@@ -5,7 +5,7 @@ import 'package:flutter_starter/core/utils/constants/app_constants.dart';
 import 'package:flutter_starter/core/utils/helpers/secure_storage_helper.dart';
 import 'package:flutter_starter/modules/auth/domain/entity/auth_user.dart';
 import 'package:flutter_starter/modules/auth/domain/repository/local/user_session_store.dart';
-import 'package:flutter_starter/modules/auth/utils/storage_helper/auth_storage_keys.dart';
+import 'package:flutter_starter/modules/auth/utils/helper/storage_helper/auth_storage_keys.dart';
 import 'package:hive/hive.dart';
 import 'package:injectable/injectable.dart';
 

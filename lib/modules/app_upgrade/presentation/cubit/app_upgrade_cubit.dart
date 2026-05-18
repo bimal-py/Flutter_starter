@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_starter/modules/app_upgrade/utils/remote_config_helper.dart';
-import 'package:flutter_starter/modules/app_upgrade/utils/remote_config_service.dart';
+import 'package:flutter_starter/modules/app_upgrade/utils/helper/remote_config_helper.dart';
+import 'package:flutter_starter/modules/app_upgrade/utils/services/remote_config_service.dart';
 
 part 'app_upgrade_state.dart';
 
