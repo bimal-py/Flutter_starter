@@ -1,8 +1,8 @@
 import 'package:flutter_starter/modules/notifications/domain/entity/notification_channels_entity.dart';
 import 'package:flutter_starter/modules/notifications/domain/entity/notification_payload_entity.dart';
 import 'package:flutter_starter/modules/notifications/domain/entity/notification_permission_status_entity.dart';
-import 'package:flutter_starter/modules/notifications/data/repository/flutter_local_notifications_provider.dart';
-import 'package:flutter_starter/modules/notifications/domain/repository/notification_provider.dart';
+import 'package:flutter_starter/modules/notifications/data/repository/local/flutter_local_notifications_provider_impl.dart';
+import 'package:flutter_starter/modules/notifications/domain/repository/local/notification_provider.dart';
 
 /// Public singleton consumers depend on. Delegates to a [NotificationProvider]
 /// — default [FlutterLocalNotificationsProvider], swappable at init time.
@@ -28,7 +28,7 @@ class NotificationService {
     List<NotificationChannelEntity> additionalChannels = const [],
     NotificationTapHandlerEntity? onLaunch,
   }) async {
-    _provider = provider ?? FlutterLocalNotificationsProvider();
+    _provider = provider ?? FlutterLocalNotificationsProviderImpl();
     await _provider!.initialize(
       channels: additionalChannels,
       onLaunch: onLaunch,
@@ -52,3 +52,4 @@ class NotificationService {
   Future<NotificationPermissionStatusEntity> permissionStatus() =>
       provider.permissionStatus();
 }
+
