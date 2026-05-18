@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter_starter/core/utils/constants/app_constants.dart';
-import 'package:flutter_starter/modules/app_upgrade/constants/app_upgrade_constants.dart';
+import 'package:flutter_starter/modules/app_upgrade/utils/constants/app_upgrade_constants.dart';
 import 'package:hive/hive.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 

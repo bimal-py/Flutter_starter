@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_starter/common/common.dart';
 import 'package:flutter_starter/core/core.dart';
-import 'package:flutter_starter/modules/device_info/cubit/cubit.dart';
+import 'package:flutter_starter/modules/device_info/presentation/cubit/cubit.dart';
 
 class DeviceInfoScreen extends StatelessWidget {
   const DeviceInfoScreen({super.key});
