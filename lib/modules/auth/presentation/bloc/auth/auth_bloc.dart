@@ -49,8 +49,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final LogoutUseCase _logoutUseCase = getIt<LogoutUseCase>();
   final GetLoggedInUserUseCase _getLoggedInUserUseCase =
       getIt<GetLoggedInUserUseCase>();
-  final WatchAuthUserUseCase _watchAuthUserUseCase =
-      getIt<WatchAuthUserUseCase>();
+  final WatchAuthUserEntityUseCase _watchAuthUserUseCase =
+      getIt<WatchAuthUserEntityUseCase>();
 
   StreamSubscription<AuthUserEntity?>? _subscription;
 
@@ -65,27 +65,30 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required String fullName,
     String code = '',
     String? phoneNumber,
-  }) => add(_AuthRegisterUserRequested(
-    email: email,
-    password: password,
-    fullName: fullName,
-    code: code,
-    phoneNumber: phoneNumber,
-  ));
+  }) => add(
+    _AuthRegisterUserRequested(
+      email: email,
+      password: password,
+      fullName: fullName,
+      code: code,
+      phoneNumber: phoneNumber,
+    ),
+  );
 
   void loginWithGoogle() => add(const _AuthLoginWithGoogleRequested());
   void loginWithApple() => add(const _AuthLoginWithAppleRequested());
 
-  void forgetPassword(String email) =>
-      add(_AuthForgetPasswordRequested(email));
+  void forgetPassword(String email) => add(_AuthForgetPasswordRequested(email));
 
   void resetPassword({
     required String oldPassword,
     required String newPassword,
-  }) => add(_AuthResetPasswordRequested(
-    oldPassword: oldPassword,
-    newPassword: newPassword,
-  ));
+  }) => add(
+    _AuthResetPasswordRequested(
+      oldPassword: oldPassword,
+      newPassword: newPassword,
+    ),
+  );
 
   void logout({bool wasStillAuthenticated = true}) =>
       add(_AuthLogoutRequested(wasStillAuthenticated: wasStillAuthenticated));
@@ -95,9 +98,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     final user = await _getLoggedInUserUseCase.execute(const NoParams());
-    emit(user != null
-        ? AuthState.authenticated(user)
-        : const AuthState.unauthenticated());
+    emit(
+      user != null
+          ? AuthState.authenticated(user)
+          : const AuthState.unauthenticated(),
+    );
   }
 
   Future<void> _onUserChanged(
@@ -110,9 +115,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   );
 
   Future<void> _onLogin(_AuthLoginRequested e, Emitter<AuthState> emit) =>
-      _runAuth(emit, () => _loginUseCase.execute(
-            LoginWithEmailPasswordParams(email: e.email, password: e.password),
-          ));
+      _runAuth(
+        emit,
+        () => _loginUseCase.execute(
+          LoginWithEmailPasswordParams(email: e.email, password: e.password),
+        ),
+      );
 
   Future<void> _onRegisterEmail(
     _AuthRegisterEmailRequested e,
@@ -122,15 +130,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _onRegisterUser(
     _AuthRegisterUserRequested e,
     Emitter<AuthState> emit,
-  ) => _runAuth(emit, () => _registerUserUseCase.execute(
-        RegisterUserParams(
-          email: e.email,
-          password: e.password,
-          fullName: e.fullName,
-          code: e.code,
-          phoneNumber: e.phoneNumber,
-        ),
-      ));
+  ) => _runAuth(
+    emit,
+    () => _registerUserUseCase.execute(
+      RegisterUserParams(
+        email: e.email,
+        password: e.password,
+        fullName: e.fullName,
+        code: e.code,
+        phoneNumber: e.phoneNumber,
+      ),
+    ),
+  );
 
   Future<void> _onLoginWithGoogle(
     _AuthLoginWithGoogleRequested e,
@@ -159,9 +170,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           newPassword: e.newPassword,
         ),
       );
-      emit(state.copyWith(status: state.user != null
-          ? AuthStatus.authenticated
-          : AuthStatus.unauthenticated));
+      emit(
+        state.copyWith(
+          status: state.user != null
+              ? AuthStatus.authenticated
+              : AuthStatus.unauthenticated,
+        ),
+      );
     } catch (error) {
       emit(state.copyWith(error: AppErrorHandler.getErrorMessage(error)));
     }
@@ -192,10 +207,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       await action();
     } catch (error) {
-      emit(state.copyWith(
-        status: AuthStatus.unauthenticated,
-        error: AppErrorHandler.getErrorMessage(error),
-      ));
+      emit(
+        state.copyWith(
+          status: AuthStatus.unauthenticated,
+          error: AppErrorHandler.getErrorMessage(error),
+        ),
+      );
     }
   }
 
@@ -210,10 +227,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await action();
       emit(state.copyWith(status: AuthStatus.unauthenticated));
     } catch (error) {
-      emit(state.copyWith(
-        status: AuthStatus.unauthenticated,
-        error: AppErrorHandler.getErrorMessage(error),
-      ));
+      emit(
+        state.copyWith(
+          status: AuthStatus.unauthenticated,
+          error: AppErrorHandler.getErrorMessage(error),
+        ),
+      );
     }
   }
 
