@@ -1,4 +1,4 @@
-import 'package:flutter_starter/modules/auth/domain/entity/auth_user.dart';
+import 'package:flutter_starter/modules/auth/domain/entity/auth_user_entity.dart';
 
 /// Backend-agnostic auth contract — swap implementations for REST / Firebase /
 /// Supabase / `InMemoryAuthRepository`. Implementations persist via
@@ -35,9 +35,9 @@ abstract class AuthRepository {
   Future<void> loginWithGoogle();
   Future<void> loginWithApple();
 
-  Future<AuthUser?> getLoggedInUser();
+  Future<AuthUserEntity?> getLoggedInUser();
 
-  Stream<AuthUser?> watchUser();
+  Stream<AuthUserEntity?> watchUser();
 
   /// [wasStillAuthenticated] = false signals a session that's already invalid
   /// server-side (revocation, 401 from interceptor) so the impl can skip the

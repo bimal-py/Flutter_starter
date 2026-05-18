@@ -4,7 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_starter/common/common.dart';
 import 'package:flutter_starter/core/core.dart';
-import 'package:flutter_starter/modules/auth/domain/entity/auth_user.dart';
+import 'package:flutter_starter/modules/auth/domain/entity/auth_user_entity.dart';
 import 'package:flutter_starter/modules/auth/domain/use_case/use_case.dart';
 
 part 'auth_event.dart';
@@ -52,7 +52,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final WatchAuthUserUseCase _watchAuthUserUseCase =
       getIt<WatchAuthUserUseCase>();
 
-  StreamSubscription<AuthUser?>? _subscription;
+  StreamSubscription<AuthUserEntity?>? _subscription;
 
   void login({required String email, required String password}) =>
       add(_AuthLoginRequested(email: email, password: password));

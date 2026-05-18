@@ -1,1 +1,1 @@
-export 'image_picker_dialog.dart';
+export 'image_picker_dialog_widget.dart';

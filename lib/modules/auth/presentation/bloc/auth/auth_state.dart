@@ -19,11 +19,11 @@ class AuthState extends Equatable {
   const AuthState.initial() : this();
   const AuthState.unauthenticated({String? error})
     : this(status: AuthStatus.unauthenticated, error: error);
-  const AuthState.authenticated(AuthUser user)
+  const AuthState.authenticated(AuthUserEntity user)
     : this(status: AuthStatus.authenticated, user: user);
 
   final AuthStatus status;
-  final AuthUser? user;
+  final AuthUserEntity? user;
   final String? error;
 
   bool get isAuthenticated => status.isAuthenticated && user != null;
@@ -31,7 +31,7 @@ class AuthState extends Equatable {
 
   AuthState copyWith({
     AuthStatus? status,
-    AuthUser? user,
+    AuthUserEntity? user,
     String? error,
   }) => AuthState(
     status: status ?? this.status,
