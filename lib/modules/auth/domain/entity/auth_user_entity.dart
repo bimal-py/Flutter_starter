@@ -3,6 +3,9 @@ import 'package:equatable/equatable.dart';
 /// Backend-agnostic user shape. Anything app-specific (roles, claims, etc.)
 /// goes in [extras] so the contract stays stable across REST / Firebase /
 /// Supabase / custom JWT implementations.
+///
+/// Pure domain object: no serialization. JSON conversion lives on
+/// `AuthUserModel` in the data layer; `AuthUserMapper` bridges the two.
 class AuthUserEntity extends Equatable {
   const AuthUserEntity({
     required this.id,
@@ -46,28 +49,6 @@ class AuthUserEntity extends Equatable {
     isEmailVerified: isEmailVerified ?? this.isEmailVerified,
     isPhoneVerified: isPhoneVerified ?? this.isPhoneVerified,
     extras: extras ?? this.extras,
-  );
-
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    if (email != null) 'email': email,
-    if (displayName != null) 'displayName': displayName,
-    if (photoUrl != null) 'photoUrl': photoUrl,
-    if (phoneNumber != null) 'phoneNumber': phoneNumber,
-    'isEmailVerified': isEmailVerified,
-    'isPhoneVerified': isPhoneVerified,
-    if (extras.isNotEmpty) 'extras': extras,
-  };
-
-  factory AuthUserEntity.fromJson(Map<String, dynamic> json) => AuthUserEntity(
-    id: json['id'].toString(),
-    email: json['email'] as String?,
-    displayName: json['displayName'] as String?,
-    photoUrl: json['photoUrl'] as String?,
-    phoneNumber: json['phoneNumber'] as String?,
-    isEmailVerified: json['isEmailVerified'] as bool? ?? false,
-    isPhoneVerified: json['isPhoneVerified'] as bool? ?? false,
-    extras: (json['extras'] as Map?)?.cast<String, dynamic>() ?? const {},
   );
 
   @override
