@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter_starter/core/di/injection.dart';
 import 'package:flutter_starter/core/utils/constants/app_constants.dart';
 import 'package:flutter_starter/core/utils/helpers/secure_storage_helper.dart';
 import 'package:flutter_starter/modules/auth/data/mapper/auth_user_mapper.dart';
@@ -18,12 +19,12 @@ import 'package:injectable/injectable.dart';
 /// [AuthUserMapper] so the [AuthUserEntity] stays serialization-free.
 @LazySingleton(as: UserSessionStore)
 class HiveSecureSessionStore implements UserSessionStore {
-  HiveSecureSessionStore(this._mapper);
+  HiveSecureSessionStore();
 
-  final AuthUserMapper _mapper;
-
-  /// Box / secure-storage are pulled lazily so unit tests can substitute a
-  /// different impl of [UserSessionStore] without needing to provide either.
+  /// Box / secure-storage / mapper are pulled lazily via [getIt] so unit tests
+  /// can swap registrations (or the whole [UserSessionStore]) without needing
+  /// to provide them up front.
+  late final AuthUserMapper _mapper = getIt<AuthUserMapper>();
   late final Box<dynamic> _userBox = Hive.box<dynamic>(AppConstants.appBoxName);
   late final SecureStorageHelper _secure = SecureStorageHelper.instance;
 

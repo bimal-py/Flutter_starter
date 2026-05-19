@@ -1,5 +1,6 @@
 import 'package:flutter_starter/modules/notifications/data/model/notification_payload_model.dart';
 import 'package:flutter_starter/modules/notifications/domain/entity/notification_payload_entity.dart';
+import 'package:injectable/injectable.dart';
 
 /// Bridges [NotificationPayloadModel] (data-layer JSON envelope) and
 /// [NotificationPayloadEntity] (domain shape). Used at the underlying plugin's
@@ -8,6 +9,7 @@ import 'package:flutter_starter/modules/notifications/domain/entity/notification
 /// `toEntity` defaults the non-serialized fields (sound, priority, actions,
 /// largeIconUrl) because the JSON envelope only carries identification + data;
 /// display-time settings come from the original `show` / `schedule` call.
+@lazySingleton
 class NotificationPayloadMapper {
   const NotificationPayloadMapper();
 

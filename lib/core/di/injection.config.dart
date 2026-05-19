@@ -68,6 +68,8 @@ import 'package:flutter_starter/modules/fcm/data/repository/remote/firebase_fcm_
     as _i811;
 import 'package:flutter_starter/modules/fcm/domain/repository/remote/fcm_repository.dart'
     as _i919;
+import 'package:flutter_starter/modules/notifications/data/mapper/notification_payload_mapper.dart'
+    as _i482;
 import 'package:flutter_starter/modules/onboarding/features/splash/presentation/bloc/splash/splash_bloc.dart'
     as _i158;
 import 'package:flutter_starter/modules/package_info/data/repository/remote/package_info_repository_impl.dart'
@@ -100,11 +102,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i1059.AuthUserMapper>(
       () => const _i1059.AuthUserMapper(),
     );
+    gh.lazySingleton<_i482.NotificationPayloadMapper>(
+      () => const _i482.NotificationPayloadMapper(),
+    );
     gh.lazySingleton<_i919.FcmRepository>(
       () => _i811.FirebaseFcmRepositoryImpl(),
-    );
-    gh.lazySingleton<_i1046.UserSessionStore>(
-      () => _i347.HiveSecureSessionStore(gh<_i1059.AuthUserMapper>()),
     );
     gh.lazySingleton<_i779.DeviceInfoRepository>(
       () => _i955.DeviceInfoRepositoryImpl(),
@@ -121,6 +123,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i314.PackageInfoRepository>(
       () => _i642.PackageInfoRepositoryImpl(),
+    );
+    gh.lazySingleton<_i1046.UserSessionStore>(
+      () => _i347.HiveSecureSessionStore(),
     );
     gh.factory<_i210.CheckAppUpgradeUseCase>(
       () => _i210.CheckAppUpgradeUseCase(gh<_i476.AppUpgradeRepository>()),
