@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_starter/modules/notifications/data/mapper/notification_payload_mapper.dart';
+import 'package:flutter_starter/modules/notifications/data/model/notification_payload_model.dart';
 import 'package:flutter_starter/modules/notifications/domain/entity/notification_channels_entity.dart';
 import 'package:flutter_starter/modules/notifications/domain/entity/notification_payload_entity.dart';
 import 'package:flutter_starter/modules/notifications/domain/entity/notification_permission_status_entity.dart';
@@ -11,8 +13,11 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 class FlutterLocalNotificationsProviderImpl implements NotificationProvider {
-  FlutterLocalNotificationsProviderImpl();
+  FlutterLocalNotificationsProviderImpl({
+    NotificationPayloadMapper mapper = const NotificationPayloadMapper(),
+  }) : _mapper = mapper;
 
+  final NotificationPayloadMapper _mapper;
   final _plugin = FlutterLocalNotificationsPlugin();
   final _tapController = StreamController<NotificationTapEventEntity>.broadcast();
   bool _initialized = false;
@@ -72,13 +77,7 @@ class FlutterLocalNotificationsProviderImpl implements NotificationProvider {
       payload.title,
       payload.body,
       _platformDetails(payload),
-      payload: jsonEncode({
-        'data': payload.data,
-        'channel': payload.channel,
-        'title': payload.title,
-        'body': payload.body,
-        'id': payload.id,
-      }),
+      payload: _encodeEnvelope(payload),
     );
   }
 
@@ -90,16 +89,15 @@ class FlutterLocalNotificationsProviderImpl implements NotificationProvider {
       payload.body,
       tz.TZDateTime.from(when, tz.local),
       _platformDetails(payload),
-      payload: jsonEncode({
-        'data': payload.data,
-        'channel': payload.channel,
-        'title': payload.title,
-        'body': payload.body,
-        'id': payload.id,
-      }),
+      payload: _encodeEnvelope(payload),
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
     );
   }
+
+  /// entity → model → JSON string. Single point where the payload crosses out
+  /// of the domain shape into the plugin's transport string.
+  String _encodeEnvelope(NotificationPayloadEntity payload) =>
+      jsonEncode(_mapper.toModel(payload).toJson());
 
   @override
   Future<void> cancel(int id) => _plugin.cancel(id);
@@ -208,22 +206,17 @@ class FlutterLocalNotificationsProviderImpl implements NotificationProvider {
     if (event != null) _tapController.add(event);
   }
 
+  /// JSON string → model → entity. Mirror of [_encodeEnvelope]; the entity
+  /// never touches the raw payload string.
   NotificationTapEventEntity? _decodeResponse(NotificationResponse response) {
     final raw = response.payload;
     if (raw == null) return null;
     try {
-      final decoded = jsonDecode(raw) as Map<String, dynamic>;
-      final payload = NotificationPayloadEntity(
-        id: decoded['id'] as int? ?? 0,
-        title: decoded['title'] as String? ?? '',
-        body: decoded['body'] as String? ?? '',
-        data: Map<String, dynamic>.from(decoded['data'] as Map? ?? {}),
-        channel:
-            decoded['channel'] as String? ??
-            NotificationChannelsEntity.defaultChannelId,
+      final model = NotificationPayloadModel.fromJson(
+        jsonDecode(raw) as Map<String, dynamic>,
       );
       return NotificationTapEventEntity(
-        payload: payload,
+        payload: _mapper.toEntity(model),
         actionId: response.actionId,
       );
     } catch (_) {
