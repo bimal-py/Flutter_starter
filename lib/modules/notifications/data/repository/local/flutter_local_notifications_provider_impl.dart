@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_starter/core/di/injection.dart';
 import 'package:flutter_starter/modules/notifications/data/mapper/notification_payload_mapper.dart';
 import 'package:flutter_starter/modules/notifications/data/model/notification_payload_model.dart';
 import 'package:flutter_starter/modules/notifications/domain/entity/notification_channels_entity.dart';
@@ -13,11 +14,11 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 class FlutterLocalNotificationsProviderImpl implements NotificationProvider {
-  FlutterLocalNotificationsProviderImpl({
-    NotificationPayloadMapper mapper = const NotificationPayloadMapper(),
-  }) : _mapper = mapper;
+  FlutterLocalNotificationsProviderImpl();
 
-  final NotificationPayloadMapper _mapper;
+  /// Resolved lazily from [getIt] so swapping the mapper in tests is just a
+  /// re-registration — no constructor plumbing through [NotificationService].
+  late final NotificationPayloadMapper _mapper = getIt<NotificationPayloadMapper>();
   final _plugin = FlutterLocalNotificationsPlugin();
   final _tapController = StreamController<NotificationTapEventEntity>.broadcast();
   bool _initialized = false;
