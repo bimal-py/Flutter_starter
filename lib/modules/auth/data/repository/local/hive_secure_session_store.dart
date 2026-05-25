@@ -1,40 +1,55 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter_starter/core/di/injection.dart';
 import 'package:flutter_starter/core/utils/constants/app_constants.dart';
 import 'package:flutter_starter/core/utils/helpers/secure_storage_helper.dart';
-import 'package:flutter_starter/modules/auth/domain/entity/auth_user.dart';
+import 'package:flutter_starter/modules/auth/data/mapper/auth_user_mapper.dart';
+import 'package:flutter_starter/modules/auth/data/model/auth_user_model.dart';
+import 'package:flutter_starter/modules/auth/domain/entity/auth_user_entity.dart';
 import 'package:flutter_starter/modules/auth/domain/repository/local/user_session_store.dart';
-import 'package:flutter_starter/modules/auth/utils/storage_helper/auth_storage_keys.dart';
+import 'package:flutter_starter/modules/auth/utils/helper/storage_helper/auth_storage_keys.dart';
 import 'package:hive/hive.dart';
 import 'package:injectable/injectable.dart';
 
 /// Default [UserSessionStore]: user JSON in Hive `app_box`, tokens in
 /// `flutter_secure_storage`. Both already wired in the starter — no setup.
+///
+/// JSON ↔ domain crosses the boundary through [AuthUserModel] +
+/// [AuthUserMapper] so the [AuthUserEntity] stays serialization-free.
 @LazySingleton(as: UserSessionStore)
 class HiveSecureSessionStore implements UserSessionStore {
   HiveSecureSessionStore();
 
-  /// Box / secure-storage are pulled lazily so unit tests can substitute a
-  /// different impl of [UserSessionStore] without needing to provide either.
+  /// Box / secure-storage / mapper are pulled lazily via [getIt] so unit tests
+  /// can swap registrations (or the whole [UserSessionStore]) without needing
+  /// to provide them up front.
+  late final AuthUserMapper _mapper = getIt<AuthUserMapper>();
   late final Box<dynamic> _userBox = Hive.box<dynamic>(AppConstants.appBoxName);
   late final SecureStorageHelper _secure = SecureStorageHelper.instance;
 
-  final StreamController<AuthUser?> _controller =
-      StreamController<AuthUser?>.broadcast();
+  final StreamController<AuthUserEntity?> _controller =
+      StreamController<AuthUserEntity?>.broadcast();
 
   @override
-  Future<void> saveUser(AuthUser user) async {
-    await _userBox.put(AuthStorageKeys.loggedInUserKey, jsonEncode(user.toJson()));
+  Future<void> saveUser(AuthUserEntity user) async {
+    final model = _mapper.toModel(user);
+    await _userBox.put(
+      AuthStorageKeys.loggedInUserKey,
+      jsonEncode(model.toJson()),
+    );
     _controller.add(user);
   }
 
   @override
-  Future<AuthUser?> getUser() async {
+  Future<AuthUserEntity?> getUser() async {
     final raw = _userBox.get(AuthStorageKeys.loggedInUserKey);
     if (raw is! String || raw.isEmpty) return null;
     try {
-      return AuthUser.fromJson(jsonDecode(raw) as Map<String, dynamic>);
+      final model = AuthUserModel.fromJson(
+        jsonDecode(raw) as Map<String, dynamic>,
+      );
+      return _mapper.toEntity(model);
     } catch (_) {
       // Drop corrupt payload so the next login can write fresh data.
       await _userBox.delete(AuthStorageKeys.loggedInUserKey);
@@ -49,7 +64,7 @@ class HiveSecureSessionStore implements UserSessionStore {
   }
 
   @override
-  Stream<AuthUser?> watchUser() async* {
+  Stream<AuthUserEntity?> watchUser() async* {
     yield await getUser();
     yield* _controller.stream;
   }
@@ -89,7 +104,7 @@ class HiveSecureSessionStore implements UserSessionStore {
 
   @override
   Future<void> saveSession({
-    required AuthUser user,
+    required AuthUserEntity user,
     required String accessToken,
     required String refreshToken,
   }) async {

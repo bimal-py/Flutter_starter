@@ -2,28 +2,29 @@ part of 'image_picker_cubit.dart';
 
 class ImagePickerState extends Equatable {
   const ImagePickerState({
-    this.files = const [],
+    this.images = const [],
     this.error,
     this.isSingleImagePicker = false,
   });
 
-  final List<File> files;
+  final List<PickedImageEntity> images;
   final String? error;
   final bool isSingleImagePicker;
 
-  bool get isEmpty => files.isEmpty;
-  bool get hasFiles => files.isNotEmpty;
+  bool get isEmpty => images.isEmpty;
+  bool get hasImages => images.isNotEmpty;
 
   ImagePickerState copyWith({
-    List<File>? files,
+    List<PickedImageEntity>? images,
     String? error,
     bool? isSingleImagePicker,
-  }) => ImagePickerState(
-    files: files ?? this.files,
-    error: error,
-    isSingleImagePicker: isSingleImagePicker ?? this.isSingleImagePicker,
-  );
+  }) =>
+      ImagePickerState(
+        images: images ?? this.images,
+        error: error,
+        isSingleImagePicker: isSingleImagePicker ?? this.isSingleImagePicker,
+      );
 
   @override
-  List<Object?> get props => [files, error, isSingleImagePicker];
+  List<Object?> get props => [images, error, isSingleImagePicker];
 }

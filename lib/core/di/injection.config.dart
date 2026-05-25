@@ -21,6 +21,15 @@ import 'package:flutter_starter/core/network/service/remote_service.dart'
     as _i439;
 import 'package:flutter_starter/core/network/service/remote_service_impl.dart'
     as _i29;
+import 'package:flutter_starter/modules/app_upgrade/app_upgrade.dart' as _i846;
+import 'package:flutter_starter/modules/app_upgrade/data/repository/remote/remote_config_upgrade_repository_impl.dart'
+    as _i746;
+import 'package:flutter_starter/modules/app_upgrade/domain/repository/remote/app_upgrade_repository.dart'
+    as _i476;
+import 'package:flutter_starter/modules/app_upgrade/domain/use_case/remote/check_app_upgrade_use_case.dart'
+    as _i210;
+import 'package:flutter_starter/modules/auth/data/mapper/auth_user_mapper.dart'
+    as _i1059;
 import 'package:flutter_starter/modules/auth/data/repository/local/hive_secure_session_store.dart'
     as _i347;
 import 'package:flutter_starter/modules/auth/data/repository/remote/in_memory_auth_repository.dart'
@@ -49,8 +58,26 @@ import 'package:flutter_starter/modules/auth/domain/use_case/remote/reset_passwo
     as _i719;
 import 'package:flutter_starter/modules/auth/domain/use_case/remote/watch_auth_user_use_case.dart'
     as _i69;
+import 'package:flutter_starter/modules/device_info/data/repository/remote/device_info_repository_impl.dart'
+    as _i955;
+import 'package:flutter_starter/modules/device_info/domain/repository/remote/device_info_repository.dart'
+    as _i779;
+import 'package:flutter_starter/modules/device_info/domain/use_case/remote/get_device_info_use_case.dart'
+    as _i502;
+import 'package:flutter_starter/modules/fcm/data/repository/remote/firebase_fcm_repository_impl.dart'
+    as _i811;
+import 'package:flutter_starter/modules/fcm/domain/repository/remote/fcm_repository.dart'
+    as _i919;
+import 'package:flutter_starter/modules/notifications/data/mapper/notification_payload_mapper.dart'
+    as _i482;
 import 'package:flutter_starter/modules/onboarding/features/splash/presentation/bloc/splash/splash_bloc.dart'
     as _i158;
+import 'package:flutter_starter/modules/package_info/data/repository/remote/package_info_repository_impl.dart'
+    as _i642;
+import 'package:flutter_starter/modules/package_info/domain/repository/remote/package_info_repository.dart'
+    as _i314;
+import 'package:flutter_starter/modules/package_info/domain/use_case/remote/get_package_info_use_case.dart'
+    as _i670;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:shared_preferences/shared_preferences.dart' as _i460;
@@ -72,12 +99,42 @@ extension GetItInjectableX on _i174.GetIt {
       preResolve: true,
     );
     gh.singleton<_i373.LogoutInterceptor>(() => _i373.LogoutInterceptor());
+    gh.lazySingleton<_i1059.AuthUserMapper>(
+      () => const _i1059.AuthUserMapper(),
+    );
+    gh.lazySingleton<_i482.NotificationPayloadMapper>(
+      () => const _i482.NotificationPayloadMapper(),
+    );
+    gh.lazySingleton<_i919.FcmRepository>(
+      () => _i811.FirebaseFcmRepositoryImpl(),
+    );
+    gh.lazySingleton<_i779.DeviceInfoRepository>(
+      () => _i955.DeviceInfoRepositoryImpl(),
+    );
+    gh.factory<_i502.GetDeviceInfoUseCase>(
+      () => _i502.GetDeviceInfoUseCase(gh<_i779.DeviceInfoRepository>()),
+    );
     gh.factory<_i438.DioClient>(() => _i438.DioClient(gh<_i588.DioConfig>()));
+    gh.lazySingleton<_i846.AppUpgradeRepository>(
+      () => _i746.RemoteConfigUpgradeRepositoryImpl(
+        service: gh<_i846.RemoteConfigService>(),
+        helper: gh<_i846.RemoteConfigHelper>(),
+      ),
+    );
+    gh.lazySingleton<_i314.PackageInfoRepository>(
+      () => _i642.PackageInfoRepositoryImpl(),
+    );
     gh.lazySingleton<_i1046.UserSessionStore>(
       () => _i347.HiveSecureSessionStore(),
     );
+    gh.factory<_i210.CheckAppUpgradeUseCase>(
+      () => _i210.CheckAppUpgradeUseCase(gh<_i476.AppUpgradeRepository>()),
+    );
     gh.lazySingleton<_i446.AuthRepository>(
       () => _i824.InMemoryAuthRepository(gh<_i1046.UserSessionStore>()),
+    );
+    gh.factory<_i670.GetPackageInfoUseCase>(
+      () => _i670.GetPackageInfoUseCase(gh<_i314.PackageInfoRepository>()),
     );
     gh.factory<_i439.RemoteService>(
       () =>
@@ -110,8 +167,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i719.ResetPasswordUseCase>(
       () => _i719.ResetPasswordUseCase(gh<_i446.AuthRepository>()),
     );
-    gh.factory<_i69.WatchAuthUserUseCase>(
-      () => _i69.WatchAuthUserUseCase(gh<_i446.AuthRepository>()),
+    gh.factory<_i69.WatchAuthUserEntityUseCase>(
+      () => _i69.WatchAuthUserEntityUseCase(gh<_i446.AuthRepository>()),
     );
     return this;
   }

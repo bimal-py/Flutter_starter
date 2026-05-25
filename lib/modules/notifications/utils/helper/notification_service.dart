@@ -1,8 +1,8 @@
-import 'package:flutter_starter/modules/notifications/domain/entity/notification_channels.dart';
-import 'package:flutter_starter/modules/notifications/domain/entity/notification_payload.dart';
-import 'package:flutter_starter/modules/notifications/domain/entity/notification_permissions.dart';
-import 'package:flutter_starter/modules/notifications/data/repository/flutter_local_notifications_provider.dart';
-import 'package:flutter_starter/modules/notifications/domain/repository/notification_provider.dart';
+import 'package:flutter_starter/modules/notifications/domain/entity/notification_channels_entity.dart';
+import 'package:flutter_starter/modules/notifications/domain/entity/notification_payload_entity.dart';
+import 'package:flutter_starter/modules/notifications/domain/entity/notification_permission_status_entity.dart';
+import 'package:flutter_starter/modules/notifications/data/repository/local/flutter_local_notifications_provider_impl.dart';
+import 'package:flutter_starter/modules/notifications/domain/repository/local/notification_provider.dart';
 
 /// Public singleton consumers depend on. Delegates to a [NotificationProvider]
 /// — default [FlutterLocalNotificationsProvider], swappable at init time.
@@ -25,30 +25,31 @@ class NotificationService {
 
   Future<void> initialize({
     NotificationProvider? provider,
-    List<NotificationChannel> additionalChannels = const [],
-    NotificationTapHandler? onLaunch,
+    List<NotificationChannelEntity> additionalChannels = const [],
+    NotificationTapHandlerEntity? onLaunch,
   }) async {
-    _provider = provider ?? FlutterLocalNotificationsProvider();
+    _provider = provider ?? FlutterLocalNotificationsProviderImpl();
     await _provider!.initialize(
       channels: additionalChannels,
       onLaunch: onLaunch,
     );
   }
 
-  Future<void> show(NotificationPayload payload) => provider.show(payload);
+  Future<void> show(NotificationPayloadEntity payload) => provider.show(payload);
 
-  Future<void> schedule(NotificationPayload payload, DateTime when) =>
+  Future<void> schedule(NotificationPayloadEntity payload, DateTime when) =>
       provider.schedule(payload, when);
 
   Future<void> cancel(int id) => provider.cancel(id);
 
   Future<void> cancelAll() => provider.cancelAll();
 
-  Stream<NotificationTapEvent> get onTap => provider.onTap;
+  Stream<NotificationTapEventEntity> get onTap => provider.onTap;
 
-  Future<NotificationPermissionStatus> requestPermissions() =>
+  Future<NotificationPermissionStatusEntity> requestPermissions() =>
       provider.requestPermissions();
 
-  Future<NotificationPermissionStatus> permissionStatus() =>
+  Future<NotificationPermissionStatusEntity> permissionStatus() =>
       provider.permissionStatus();
 }
+

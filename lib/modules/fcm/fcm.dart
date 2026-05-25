@@ -13,6 +13,7 @@
 ///   );
 library;
 
+export 'data/data.dart';
 export 'domain/domain.dart';
-export 'integrations/integrations.dart';
 export 'utils/utils.dart';
+

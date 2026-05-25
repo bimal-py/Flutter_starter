@@ -18,19 +18,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   int _index = 0;
 
   static const _pages = [
-    OnboardingPage(
+    OnboardingPageWidget(
       icon: LucideIcons.rocket,
       title: 'Ship faster',
       subtitle:
           'Skip the boilerplate. Start from a clean architecture instead of a blank Flutter template.',
     ),
-    OnboardingPage(
+    OnboardingPageWidget(
       icon: LucideIcons.layers,
       title: 'Feature-first modules',
       subtitle:
           'Each feature owns its data, domain, and presentation layers — no tangled dependencies.',
     ),
-    OnboardingPage(
+    OnboardingPageWidget(
       icon: LucideIcons.palette,
       title: 'Themeable by default',
       subtitle:
@@ -84,7 +84,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 itemBuilder: (_, i) => _pages[i],
               ),
             ),
-            OnboardingDots(count: _pages.length, current: _index),
+            OnboardingDotsWidget(count: _pages.length, current: _index),
             Padding(
               padding: EdgeInsets.fromLTRB(24.w, 24.h, 24.w, 16.h),
               child: SizedBox(

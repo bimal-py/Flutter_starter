@@ -14,12 +14,12 @@ class HomeScreen extends StatelessWidget {
       slivers: [
         SliverPadding(
           padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 8.h),
-          sliver: const SliverToBoxAdapter(child: HomeHeroBanner()),
+          sliver: const SliverToBoxAdapter(child: HomeHeroBannerWidget()),
         ),
         SliverPadding(
           padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 8.h),
           sliver: const SliverToBoxAdapter(
-            child: HomeSectionLabel(text: 'Try the demos'),
+            child: HomeSectionLabelWidget(text: 'Try the demos'),
           ),
         ),
         SliverPadding(
@@ -32,12 +32,12 @@ class HomeScreen extends StatelessWidget {
               childAspectRatio: 1.05,
             ),
             delegate: SliverChildListDelegate([
-              HomeFeatureCard(
+              HomeFeatureCardWidget(
                 icon: LucideIcons.info,
                 label: 'About',
                 onTap: (c) => c.pushNamed(Routes.about.name),
               ),
-              HomeFeatureCard(
+              HomeFeatureCardWidget(
                 icon: LucideIcons.globe,
                 label: 'Open website',
                 onTap: (c) => c.pushNamed(
@@ -45,7 +45,7 @@ class HomeScreen extends StatelessWidget {
                   extra: AppUrls.demoSite,
                 ),
               ),
-              HomeFeatureCard(
+              HomeFeatureCardWidget(
                 icon: LucideIcons.qrCode,
                 label: 'Share via QR',
                 onTap: (c) => QrPopup.show(

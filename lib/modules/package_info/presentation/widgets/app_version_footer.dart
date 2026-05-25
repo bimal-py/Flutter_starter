@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_starter/core/core.dart';
-import 'package:flutter_starter/modules/package_info/cubit/cubit.dart';
+import 'package:flutter_starter/modules/package_info/package_info.dart';
 
 /// Centered "Version x.y.z (build)" text. Reads from the globally-provided
 /// [PackageInfoCubit] and renders nothing until the info has loaded.

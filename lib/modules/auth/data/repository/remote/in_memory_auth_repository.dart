@@ -1,11 +1,11 @@
 import 'package:flutter_starter/core/errors/exceptions.dart';
-import 'package:flutter_starter/modules/auth/domain/entity/auth_user.dart';
+import 'package:flutter_starter/modules/auth/domain/entity/auth_user_entity.dart';
 import 'package:flutter_starter/modules/auth/domain/repository/remote/auth_repository.dart';
 import 'package:flutter_starter/modules/auth/domain/repository/local/user_session_store.dart';
 import 'package:injectable/injectable.dart';
 
 /// Working stub. Accepts any non-empty credentials and fabricates an
-/// [AuthUser]; exercises the real Hive + secure-storage round-trip so the
+/// [AuthUserEntity]; exercises the real Hive + secure-storage round-trip so the
 /// pipeline (bloc → bootstrapper → state) is testable end-to-end without a
 /// backend. **Swap before shipping** — write your own
 /// `@LazySingleton(as: AuthRepository)` class (REST / Firebase / Supabase /
@@ -89,10 +89,10 @@ class InMemoryAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<AuthUser?> getLoggedInUser() => _store.getUser();
+  Future<AuthUserEntity?> getLoggedInUser() => _store.getUser();
 
   @override
-  Stream<AuthUser?> watchUser() => _store.watchUser();
+  Stream<AuthUserEntity?> watchUser() => _store.watchUser();
 
   @override
   Future<void> logout({bool wasStillAuthenticated = true}) =>
@@ -102,7 +102,7 @@ class InMemoryAuthRepository implements AuthRepository {
     required String email,
     String? displayName,
   }) async {
-    final user = AuthUser(
+    final user = AuthUserEntity(
       id: email.hashCode.toRadixString(16),
       email: email,
       displayName: displayName ?? email.split('@').first,
