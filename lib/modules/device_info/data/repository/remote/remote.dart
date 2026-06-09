@@ -1,1 +1,1 @@
-export 'device_info_repository_impl.dart';
+export 'remote_device_info_repository_impl.dart';

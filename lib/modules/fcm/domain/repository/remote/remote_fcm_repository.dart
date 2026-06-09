@@ -1,6 +1,6 @@
 import 'package:flutter_starter/modules/fcm/domain/entity/fcm_remote_message_entity.dart';
 
-abstract class FcmRepository {
+abstract class RemoteFcmRepository {
   Future<void> initialize({
     void Function(FcmRemoteMessageEntity)? onForegroundMessage,
     void Function(FcmRemoteMessageEntity)? onMessageOpenedApp,

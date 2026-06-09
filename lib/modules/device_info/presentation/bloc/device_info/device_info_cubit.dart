@@ -1,25 +1,20 @@
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_starter/common/common.dart';
+import 'package:flutter_starter/core/core.dart';
+import 'package:flutter_starter/modules/device_info/domain/entity/device_info_entity.dart';
+import 'package:flutter_starter/modules/device_info/domain/use_case/remote/get_device_info_use_case.dart';
 
 part 'device_info_state.dart';
 
 class DeviceInfoCubit extends Cubit<DeviceInfoState> {
   DeviceInfoCubit() : super(const DeviceInfoState());
 
+  final GetDeviceInfoUseCase _getDeviceInfoUseCase =
+      getIt<GetDeviceInfoUseCase>();
+
   Future<void> loadDeviceInfo() async {
-    final plugin = DeviceInfoPlugin();
-    final BaseDeviceInfo info = kIsWeb
-        ? await plugin.webBrowserInfo
-        : switch (defaultTargetPlatform) {
-            TargetPlatform.android => await plugin.androidInfo,
-            TargetPlatform.iOS => await plugin.iosInfo,
-            TargetPlatform.macOS => await plugin.macOsInfo,
-            TargetPlatform.windows => await plugin.windowsInfo,
-            TargetPlatform.linux => await plugin.linuxInfo,
-            _ => await plugin.deviceInfo,
-          };
-    emit(state.copyWith(deviceInfo: info));
+    final entity = await _getDeviceInfoUseCase.execute(const NoParams());
+    emit(state.copyWith(deviceInfo: entity));
   }
 }

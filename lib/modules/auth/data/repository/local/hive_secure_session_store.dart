@@ -2,14 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_starter/core/di/injection.dart';
-import 'package:flutter_starter/core/utils/constants/app_constants.dart';
+import 'package:flutter_starter/core/utils/helpers/hive_helper.dart';
 import 'package:flutter_starter/core/utils/helpers/secure_storage_helper.dart';
 import 'package:flutter_starter/modules/auth/data/mapper/auth_user_mapper.dart';
 import 'package:flutter_starter/modules/auth/data/model/auth_user_model.dart';
 import 'package:flutter_starter/modules/auth/domain/entity/auth_user_entity.dart';
 import 'package:flutter_starter/modules/auth/domain/repository/local/user_session_store.dart';
-import 'package:flutter_starter/modules/auth/utils/helper/storage_helper/auth_storage_keys.dart';
-import 'package:hive/hive.dart';
+import 'package:flutter_starter/modules/auth/utils/storage_helper/auth_storage_keys.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:injectable/injectable.dart';
 
 /// Default [UserSessionStore]: user JSON in Hive `app_box`, tokens in
@@ -25,7 +25,7 @@ class HiveSecureSessionStore implements UserSessionStore {
   /// can swap registrations (or the whole [UserSessionStore]) without needing
   /// to provide them up front.
   late final AuthUserMapper _mapper = getIt<AuthUserMapper>();
-  late final Box<dynamic> _userBox = Hive.box<dynamic>(AppConstants.appBoxName);
+  late final Box<dynamic> _userBox = Hive.appBox;
   late final SecureStorageHelper _secure = SecureStorageHelper.instance;
 
   final StreamController<AuthUserEntity?> _controller =

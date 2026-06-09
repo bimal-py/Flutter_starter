@@ -1,1 +1,1 @@
-export 'notification_provider.dart';
+export 'local_notifications_repository.dart';

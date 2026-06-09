@@ -3,10 +3,10 @@ import 'package:flutter_starter/modules/notifications/domain/entity/notification
 import 'package:flutter_starter/modules/notifications/domain/entity/notification_permission_status_entity.dart';
 
 /// Plugin-agnostic notifications backend. The default app wires
-/// [FlutterLocalNotificationsProviderImpl]; swap by implementing this interface
-/// (e.g. AwesomeNotificationsProvider) and passing it to
+/// [LocalNotificationsRepositoryImpl]; swap by implementing this interface
+/// (e.g. AwesomeNotificationsRepository) and passing it to
 /// `NotificationService.instance.initialize(provider: ...)`.
-abstract class NotificationProvider {
+abstract class LocalNotificationsRepository {
   bool get isInitialized;
 
   Future<void> initialize({

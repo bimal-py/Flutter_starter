@@ -3,9 +3,9 @@ part of 'device_info_cubit.dart';
 class DeviceInfoState extends Equatable {
   const DeviceInfoState({this.deviceInfo});
 
-  final BaseDeviceInfo? deviceInfo;
+  final DeviceInfoEntity? deviceInfo;
 
-  DeviceInfoState copyWith({BaseDeviceInfo? deviceInfo}) =>
+  DeviceInfoState copyWith({DeviceInfoEntity? deviceInfo}) =>
       DeviceInfoState(deviceInfo: deviceInfo ?? this.deviceInfo);
 
   @override

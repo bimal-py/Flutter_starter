@@ -1,9 +1,6 @@
-import 'package:flutter_starter/core/utils/utils.dart';
-import 'package:flutter_starter/modules/fcm/utils/helper/storage_helper/fcm_storage_keys.dart';
+import 'package:flutter_starter/core/utils/helpers/secure_storage_helper.dart';
+import 'package:flutter_starter/modules/fcm/utils/storage_helper/fcm_storage_keys.dart';
 
-/// Token-sync + permission-prompt persistence for FCM. Wraps the global
-/// SecureStorageHelper so the FCM module owns its keys without re-implementing
-/// the storage layer.
 class FcmSecureStorage {
   FcmSecureStorage();
 

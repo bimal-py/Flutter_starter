@@ -1,14 +1,20 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:package_info_plus/package_info_plus.dart';
+import 'package:flutter_starter/common/common.dart';
+import 'package:flutter_starter/core/core.dart';
+import 'package:flutter_starter/modules/package_info/domain/entity/package_info_entity.dart';
+import 'package:flutter_starter/modules/package_info/domain/use_case/remote/get_package_info_use_case.dart';
 
 part 'package_info_state.dart';
 
 class PackageInfoCubit extends Cubit<PackageInfoState> {
   PackageInfoCubit() : super(const PackageInfoState());
 
+  final GetPackageInfoUseCase _getPackageInfoUseCase =
+      getIt<GetPackageInfoUseCase>();
+
   Future<void> loadPackageInfo() async {
-    final packageInfo = await PackageInfo.fromPlatform();
-    emit(state.copyWith(packageInfo: packageInfo));
+    final entity = await _getPackageInfoUseCase.execute(const NoParams());
+    emit(state.copyWith(packageInfo: entity));
   }
 }

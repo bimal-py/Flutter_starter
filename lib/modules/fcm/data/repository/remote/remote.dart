@@ -1,1 +1,1 @@
-export 'firebase_fcm_repository_impl.dart';
+export 'remote_fcm_repository_impl.dart';

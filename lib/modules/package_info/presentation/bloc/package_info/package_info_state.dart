@@ -3,9 +3,9 @@ part of 'package_info_cubit.dart';
 class PackageInfoState extends Equatable {
   const PackageInfoState({this.packageInfo});
 
-  final PackageInfo? packageInfo;
+  final PackageInfoEntity? packageInfo;
 
-  PackageInfoState copyWith({PackageInfo? packageInfo}) =>
+  PackageInfoState copyWith({PackageInfoEntity? packageInfo}) =>
       PackageInfoState(packageInfo: packageInfo ?? this.packageInfo);
 
   @override

@@ -6,7 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_starter/core/core.dart';
 import 'package:flutter_starter/modules/fcm/domain/entity/fcm_remote_message_entity.dart';
 import 'package:flutter_starter/modules/fcm/utils/constants/fcm_constants.dart';
-import 'package:flutter_starter/modules/fcm/utils/helper/storage_helper/fcm_secure_storage.dart';
+import 'package:flutter_starter/modules/fcm/utils/storage_helper/fcm_secure_storage.dart';
 
 /// Wraps [FirebaseMessaging]. No-op when [EnvConfig.firebaseEnabled] is false
 /// so the two main.dart lines stay benign while Firebase is opt-in.

@@ -15,7 +15,7 @@ class NotificationActionEntity {
   final bool foreground;
 }
 
-/// Package-agnostic payload. [NotificationProvider] implementations translate
+/// Package-agnostic payload. [LocalNotificationsRepository] implementations translate
 /// this to their underlying plugin's representation.
 class NotificationPayloadEntity {
   const NotificationPayloadEntity({

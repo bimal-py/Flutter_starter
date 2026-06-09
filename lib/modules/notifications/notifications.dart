@@ -4,7 +4,7 @@
 ///   entries from the plugin docs. Provide a small @drawable/ic_notification
 ///   for the status-bar icon.
 /// - iOS: ensure UNUserNotificationCenter delegate is set in AppDelegate.
-/// To replace the underlying package, implement [NotificationProvider] and
+/// To replace the underlying package, implement [LocalNotificationsRepository] and
 /// pass it to `NotificationService.instance.initialize(provider: ...)`.
 library;
 

@@ -1,10 +1,10 @@
 import 'package:flutter_starter/modules/fcm/domain/entity/fcm_remote_message_entity.dart';
-import 'package:flutter_starter/modules/fcm/domain/repository/remote/fcm_repository.dart';
+import 'package:flutter_starter/modules/fcm/domain/repository/remote/remote_fcm_repository.dart';
 import 'package:flutter_starter/modules/fcm/utils/helper/fcm_service.dart';
 import 'package:injectable/injectable.dart';
 
-@LazySingleton(as: FcmRepository)
-class FirebaseFcmRepositoryImpl implements FcmRepository {
+@LazySingleton(as: RemoteFcmRepository)
+class RemoteFcmRepositoryImpl implements RemoteFcmRepository {
   final FcmService _service = FcmService.instance;
 
   @override

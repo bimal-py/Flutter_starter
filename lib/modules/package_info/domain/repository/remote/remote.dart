@@ -1,1 +1,1 @@
-export 'package_info_repository.dart';
+export 'remote_package_info_repository.dart';

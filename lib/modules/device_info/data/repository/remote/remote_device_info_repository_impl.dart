@@ -1,11 +1,11 @@
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_starter/modules/device_info/domain/entity/device_info_entity.dart';
-import 'package:flutter_starter/modules/device_info/domain/repository/remote/device_info_repository.dart';
+import 'package:flutter_starter/modules/device_info/domain/repository/remote/remote_device_info_repository.dart';
 import 'package:injectable/injectable.dart';
 
-@LazySingleton(as: DeviceInfoRepository)
-class DeviceInfoRepositoryImpl implements DeviceInfoRepository {
+@LazySingleton(as: RemoteDeviceInfoRepository)
+class RemoteDeviceInfoRepositoryImpl implements RemoteDeviceInfoRepository {
   @override
   Future<DeviceInfoEntity> getDeviceInfo() async {
     final plugin = DeviceInfoPlugin();

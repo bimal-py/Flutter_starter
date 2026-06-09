@@ -11,15 +11,10 @@ part 'app_upgrade_state.dart';
 /// against `package_info_plus`. Honours per-platform kill switches, the
 /// "ignore this version" preference (bypassed by `force_update`).
 class AppUpgradeCubit extends Cubit<AppUpgradeState> {
-  AppUpgradeCubit({
-    RemoteConfigService? service,
-    RemoteConfigHelper? helper,
-  })  : _service = service ?? RemoteConfigService.instance,
-        _helper = helper ?? RemoteConfigHelper(),
-        super(const AppUpgradeState());
+  AppUpgradeCubit() : super(const AppUpgradeState());
 
-  final RemoteConfigService _service;
-  final RemoteConfigHelper _helper;
+  final RemoteConfigService _service = RemoteConfigService.instance;
+  final RemoteConfigHelper _helper = RemoteConfigHelper();
 
   Future<void> checkForUpdate() async {
     if (state.status == AppUpgradeStatus.checking) return;

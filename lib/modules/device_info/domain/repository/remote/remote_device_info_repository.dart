@@ -1,5 +1,5 @@
 import 'package:flutter_starter/modules/device_info/domain/entity/device_info_entity.dart';
 
-abstract class DeviceInfoRepository {
+abstract class RemoteDeviceInfoRepository {
   Future<DeviceInfoEntity> getDeviceInfo();
 }

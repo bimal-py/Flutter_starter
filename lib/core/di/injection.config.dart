@@ -21,11 +21,10 @@ import 'package:flutter_starter/core/network/service/remote_service.dart'
     as _i439;
 import 'package:flutter_starter/core/network/service/remote_service_impl.dart'
     as _i29;
-import 'package:flutter_starter/modules/app_upgrade/app_upgrade.dart' as _i846;
-import 'package:flutter_starter/modules/app_upgrade/data/repository/remote/remote_config_upgrade_repository_impl.dart'
-    as _i746;
-import 'package:flutter_starter/modules/app_upgrade/domain/repository/remote/app_upgrade_repository.dart'
-    as _i476;
+import 'package:flutter_starter/modules/app_upgrade/data/repository/remote/remote_app_upgrade_repository_impl.dart'
+    as _i714;
+import 'package:flutter_starter/modules/app_upgrade/domain/repository/remote/remote_app_upgrade_repository.dart'
+    as _i280;
 import 'package:flutter_starter/modules/app_upgrade/domain/use_case/remote/check_app_upgrade_use_case.dart'
     as _i210;
 import 'package:flutter_starter/modules/auth/data/mapper/auth_user_mapper.dart'
@@ -58,24 +57,24 @@ import 'package:flutter_starter/modules/auth/domain/use_case/remote/reset_passwo
     as _i719;
 import 'package:flutter_starter/modules/auth/domain/use_case/remote/watch_auth_user_use_case.dart'
     as _i69;
-import 'package:flutter_starter/modules/device_info/data/repository/remote/device_info_repository_impl.dart'
-    as _i955;
-import 'package:flutter_starter/modules/device_info/domain/repository/remote/device_info_repository.dart'
-    as _i779;
+import 'package:flutter_starter/modules/device_info/data/repository/remote/remote_device_info_repository_impl.dart'
+    as _i722;
+import 'package:flutter_starter/modules/device_info/domain/repository/remote/remote_device_info_repository.dart'
+    as _i85;
 import 'package:flutter_starter/modules/device_info/domain/use_case/remote/get_device_info_use_case.dart'
     as _i502;
-import 'package:flutter_starter/modules/fcm/data/repository/remote/firebase_fcm_repository_impl.dart'
-    as _i811;
-import 'package:flutter_starter/modules/fcm/domain/repository/remote/fcm_repository.dart'
-    as _i919;
+import 'package:flutter_starter/modules/fcm/data/repository/remote/remote_fcm_repository_impl.dart'
+    as _i295;
+import 'package:flutter_starter/modules/fcm/domain/repository/remote/remote_fcm_repository.dart'
+    as _i938;
 import 'package:flutter_starter/modules/notifications/data/mapper/notification_payload_mapper.dart'
     as _i482;
 import 'package:flutter_starter/modules/onboarding/features/splash/presentation/bloc/splash/splash_bloc.dart'
     as _i158;
-import 'package:flutter_starter/modules/package_info/data/repository/remote/package_info_repository_impl.dart'
-    as _i642;
-import 'package:flutter_starter/modules/package_info/domain/repository/remote/package_info_repository.dart'
-    as _i314;
+import 'package:flutter_starter/modules/package_info/data/repository/remote/remote_package_info_repository_impl.dart'
+    as _i729;
+import 'package:flutter_starter/modules/package_info/domain/repository/remote/remote_package_info_repository.dart'
+    as _i30;
 import 'package:flutter_starter/modules/package_info/domain/use_case/remote/get_package_info_use_case.dart'
     as _i670;
 import 'package:get_it/get_it.dart' as _i174;
@@ -105,40 +104,34 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i482.NotificationPayloadMapper>(
       () => const _i482.NotificationPayloadMapper(),
     );
-    gh.lazySingleton<_i919.FcmRepository>(
-      () => _i811.FirebaseFcmRepositoryImpl(),
+    gh.lazySingleton<_i85.RemoteDeviceInfoRepository>(
+      () => _i722.RemoteDeviceInfoRepositoryImpl(),
     );
-    gh.lazySingleton<_i779.DeviceInfoRepository>(
-      () => _i955.DeviceInfoRepositoryImpl(),
-    );
-    gh.factory<_i502.GetDeviceInfoUseCase>(
-      () => _i502.GetDeviceInfoUseCase(gh<_i779.DeviceInfoRepository>()),
-    );
-    gh.factory<_i438.DioClient>(() => _i438.DioClient(gh<_i588.DioConfig>()));
-    gh.lazySingleton<_i846.AppUpgradeRepository>(
-      () => _i746.RemoteConfigUpgradeRepositoryImpl(
-        service: gh<_i846.RemoteConfigService>(),
-        helper: gh<_i846.RemoteConfigHelper>(),
-      ),
-    );
-    gh.lazySingleton<_i314.PackageInfoRepository>(
-      () => _i642.PackageInfoRepositoryImpl(),
+    gh.lazySingleton<_i30.RemotePackageInfoRepository>(
+      () => _i729.RemotePackageInfoRepositoryImpl(),
     );
     gh.lazySingleton<_i1046.UserSessionStore>(
       () => _i347.HiveSecureSessionStore(),
     );
-    gh.factory<_i210.CheckAppUpgradeUseCase>(
-      () => _i210.CheckAppUpgradeUseCase(gh<_i476.AppUpgradeRepository>()),
+    gh.lazySingleton<_i938.RemoteFcmRepository>(
+      () => _i295.RemoteFcmRepositoryImpl(),
+    );
+    gh.factory<_i438.DioClient>(() => _i438.DioClient(gh<_i588.DioConfig>()));
+    gh.lazySingleton<_i280.RemoteAppUpgradeRepository>(
+      () => _i714.RemoteAppUpgradeRepositoryImpl(),
     );
     gh.lazySingleton<_i446.AuthRepository>(
       () => _i824.InMemoryAuthRepository(gh<_i1046.UserSessionStore>()),
     );
     gh.factory<_i670.GetPackageInfoUseCase>(
-      () => _i670.GetPackageInfoUseCase(gh<_i314.PackageInfoRepository>()),
+      () => _i670.GetPackageInfoUseCase(gh<_i30.RemotePackageInfoRepository>()),
     );
-    gh.factory<_i439.RemoteService>(
+    gh.factory<_i502.GetDeviceInfoUseCase>(
+      () => _i502.GetDeviceInfoUseCase(gh<_i85.RemoteDeviceInfoRepository>()),
+    );
+    gh.factory<_i210.CheckAppUpgradeUseCase>(
       () =>
-          _i29.RemoteServiceImpl(gh<_i438.DioClient>(), gh<_i588.DioConfig>()),
+          _i210.CheckAppUpgradeUseCase(gh<_i280.RemoteAppUpgradeRepository>()),
     );
     gh.factory<_i104.ForgetPasswordUseCase>(
       () => _i104.ForgetPasswordUseCase(gh<_i446.AuthRepository>()),
@@ -169,6 +162,10 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i69.WatchAuthUserEntityUseCase>(
       () => _i69.WatchAuthUserEntityUseCase(gh<_i446.AuthRepository>()),
+    );
+    gh.factory<_i439.RemoteService>(
+      () =>
+          _i29.RemoteServiceImpl(gh<_i438.DioClient>(), gh<_i588.DioConfig>()),
     );
     return this;
   }

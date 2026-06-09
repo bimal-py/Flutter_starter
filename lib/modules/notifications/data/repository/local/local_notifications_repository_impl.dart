@@ -9,12 +9,12 @@ import 'package:flutter_starter/modules/notifications/data/model/notification_pa
 import 'package:flutter_starter/modules/notifications/domain/entity/notification_channels_entity.dart';
 import 'package:flutter_starter/modules/notifications/domain/entity/notification_payload_entity.dart';
 import 'package:flutter_starter/modules/notifications/domain/entity/notification_permission_status_entity.dart';
-import 'package:flutter_starter/modules/notifications/domain/repository/local/notification_provider.dart';
+import 'package:flutter_starter/modules/notifications/domain/repository/local/local_notifications_repository.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
-class FlutterLocalNotificationsProviderImpl implements NotificationProvider {
-  FlutterLocalNotificationsProviderImpl();
+class LocalNotificationsRepositoryImpl implements LocalNotificationsRepository {
+  LocalNotificationsRepositoryImpl();
 
   /// Resolved lazily from [getIt] so swapping the mapper in tests is just a
   /// re-registration — no constructor plumbing through [NotificationService].

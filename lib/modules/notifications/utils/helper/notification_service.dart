@@ -1,17 +1,17 @@
+import 'package:flutter_starter/modules/notifications/data/repository/local/local_notifications_repository_impl.dart';
 import 'package:flutter_starter/modules/notifications/domain/entity/notification_channels_entity.dart';
 import 'package:flutter_starter/modules/notifications/domain/entity/notification_payload_entity.dart';
 import 'package:flutter_starter/modules/notifications/domain/entity/notification_permission_status_entity.dart';
-import 'package:flutter_starter/modules/notifications/data/repository/local/flutter_local_notifications_provider_impl.dart';
-import 'package:flutter_starter/modules/notifications/domain/repository/local/notification_provider.dart';
+import 'package:flutter_starter/modules/notifications/domain/repository/local/local_notifications_repository.dart';
 
-/// Public singleton consumers depend on. Delegates to a [NotificationProvider]
-/// — default [FlutterLocalNotificationsProvider], swappable at init time.
+/// Public singleton consumers depend on. Delegates to a [LocalNotificationsRepository]
+/// — default [LocalNotificationsRepositoryImpl], swappable at init time.
 class NotificationService {
   NotificationService._();
   static final NotificationService instance = NotificationService._();
 
-  NotificationProvider? _provider;
-  NotificationProvider get provider {
+  LocalNotificationsRepository? _provider;
+  LocalNotificationsRepository get provider {
     final p = _provider;
     if (p == null) {
       throw StateError(
@@ -24,11 +24,11 @@ class NotificationService {
   bool get isInitialized => _provider?.isInitialized ?? false;
 
   Future<void> initialize({
-    NotificationProvider? provider,
+    LocalNotificationsRepository? provider,
     List<NotificationChannelEntity> additionalChannels = const [],
     NotificationTapHandlerEntity? onLaunch,
   }) async {
-    _provider = provider ?? FlutterLocalNotificationsProviderImpl();
+    _provider = provider ?? LocalNotificationsRepositoryImpl();
     await _provider!.initialize(
       channels: additionalChannels,
       onLaunch: onLaunch,
@@ -52,4 +52,3 @@ class NotificationService {
   Future<NotificationPermissionStatusEntity> permissionStatus() =>
       provider.permissionStatus();
 }
-
