@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_starter/modules/auth/domain/entity/auth_user_entity.dart';
 import 'package:flutter_starter/modules/auth/presentation/bloc/auth/auth_bloc.dart';
+import 'package:flutter_starter/modules/user/user.dart';
 
 /// Listens for authenticated ↔ unauthenticated edges so route navigation
 /// stays in app code (the bloc remains UI-free). Wrap any subtree below the
@@ -31,7 +31,7 @@ class AuthBootstrapper extends StatelessWidget {
   /// Fires on `unauthenticated → authenticated` edges. Does NOT fire on
   /// cold-start with a hydrated session — handle that via your router's
   /// initial-location logic.
-  final void Function(BuildContext context, AuthUserEntity user)? onAuthenticated;
+  final void Function(BuildContext context, UserEntity user)? onAuthenticated;
 
   @override
   Widget build(BuildContext context) {

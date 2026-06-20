@@ -53,3 +53,27 @@ macos/Runner/GoogleService-Info.plist
 
 # Claude Code (local-only)
 .claude/
+
+*.env
+
+/android/app/upload-keystore.jks
+/android/key.properties
+
+/pubspec.lock
+
+*.claude
+
+# FVM Version Cache
+.fvm/
+
+# Local prompts / scratch
+figma-flutter-prompt.md
+feature-module-prompt.md
+
+*.env
+.vscode/
+/android/app/upload-keystore.jks
+/android/key.properties
+
+pubspec.lock
+.codex-temp/

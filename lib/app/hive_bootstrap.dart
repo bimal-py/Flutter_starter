@@ -1,4 +1,5 @@
 import 'package:flutter_starter/core/core.dart';
+import 'package:flutter_starter/modules/auth/auth.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 /// Registry of every Hive box opener across the app.
@@ -8,6 +9,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 /// only place the bootstrap layer needs to know about them.
 final List<Future<dynamic> Function()> _boxOpeners = <Future<dynamic> Function()>[
   () => Hive.openAppBox(),
+  () => Hive.openAuthBox(),
   // Add module box openers here, e.g.:
   // () => Hive.openReminderDataBox(),
   // () => Hive.openReminderCategoryDataBox(),
@@ -16,6 +18,7 @@ final List<Future<dynamic> Function()> _boxOpeners = <Future<dynamic> Function()
 /// Mirror of [_boxOpeners] for "log out" / "reset app" flows.
 final List<Future<dynamic> Function()> _boxClearers = <Future<dynamic> Function()>[
   () => Hive.clearAppBox(),
+  () => Hive.clearAuthBox(),
   // () => Hive.clearReminderDataBox(),
   // () => Hive.clearReminderCategoryDataBox(),
 ];

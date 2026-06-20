@@ -1,10 +1,5 @@
-import 'package:flutter_starter/modules/auth/domain/entity/auth_user_entity.dart';
+import 'package:flutter_starter/modules/user/user.dart';
 
-/// Backend-agnostic auth contract — swap implementations for REST / Firebase /
-/// Supabase / `InMemoryAuthRepository`. Implementations persist via
-/// [UserSessionStore], emit on [watchUser] when that storage changes, and
-/// translate provider errors to [AuthenticationException] before they cross
-/// this boundary.
 abstract class AuthRepository {
   Future<void> loginWithEmailAndPassword({
     required String email,
@@ -12,7 +7,6 @@ abstract class AuthRepository {
   });
 
   /// Optional two-step registration: ship a verification code to [email].
-  /// No-op for backends that don't gate sign-up behind a code.
   Future<void> registerEmail({required String email});
 
   /// Finalise registration. Pass an empty [code] when the backend doesn't
@@ -20,9 +14,7 @@ abstract class AuthRepository {
   Future<void> registerUser({
     required String email,
     required String password,
-    required String fullName,
-    String code = '',
-    String? phoneNumber,
+    required String code,
   });
 
   Future<void> forgetPassword({required String email});
@@ -35,12 +27,10 @@ abstract class AuthRepository {
   Future<void> loginWithGoogle();
   Future<void> loginWithApple();
 
-  Future<AuthUserEntity?> getLoggedInUser();
+  Future<UserEntity?> getLoggedInUser();
 
-  Stream<AuthUserEntity?> watchUser();
+  Stream<UserEntity?> watchUser();
 
-  /// [wasStillAuthenticated] = false signals a session that's already invalid
-  /// server-side (revocation, 401 from interceptor) so the impl can skip the
-  /// server-hop and clear local state only.
+  // wasStillAuthenticated=false skips the server call (session already invalid).
   Future<void> logout({bool wasStillAuthenticated = true});
 }

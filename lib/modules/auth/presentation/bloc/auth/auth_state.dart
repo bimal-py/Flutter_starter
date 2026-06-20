@@ -1,10 +1,9 @@
 part of 'auth_bloc.dart';
 
-enum AuthStatus { initial, busy, authenticated, unauthenticated }
+enum AuthStatus { initial, authenticated, unauthenticated }
 
 extension AuthStatusX on AuthStatus {
   bool get isInitial => this == AuthStatus.initial;
-  bool get isBusy => this == AuthStatus.busy;
   bool get isAuthenticated => this == AuthStatus.authenticated;
   bool get isUnauthenticated => this == AuthStatus.unauthenticated;
 }
@@ -13,34 +12,23 @@ class AuthState extends Equatable {
   const AuthState({
     this.status = AuthStatus.initial,
     this.user,
-    this.error,
+    this.session,
   });
 
   const AuthState.initial() : this();
-  const AuthState.unauthenticated({String? error})
-    : this(status: AuthStatus.unauthenticated, error: error);
-  const AuthState.authenticated(AuthUserEntity user)
-    : this(status: AuthStatus.authenticated, user: user);
+  const AuthState.unauthenticated() : this(status: AuthStatus.unauthenticated);
+  const AuthState.authenticated(UserEntity user, [AuthSessionEntity? session])
+    : this(status: AuthStatus.authenticated, user: user, session: session);
 
   final AuthStatus status;
-  final AuthUserEntity? user;
-  final String? error;
+  final UserEntity? user;
+  final AuthSessionEntity? session;
 
   bool get isAuthenticated => status.isAuthenticated && user != null;
   bool get isUnauthenticated => status.isUnauthenticated;
 
-  AuthState copyWith({
-    AuthStatus? status,
-    AuthUserEntity? user,
-    String? error,
-  }) => AuthState(
-    status: status ?? this.status,
-    // unauthenticated → drop the user. Other transitions keep whatever was
-    // there so a stale snapshot doesn't disappear mid-flow.
-    user: status == AuthStatus.unauthenticated ? null : (user ?? this.user),
-    error: error,
-  );
+  List<String> get roles => session?.roles ?? const [];
 
   @override
-  List<Object?> get props => [status, user, error];
+  List<Object?> get props => [status, user, session];
 }

@@ -37,6 +37,7 @@ flutter run
   - [FCM (push)](#fcm-push) *(removable)*
   - [App upgrade alert](#app-upgrade-alert) *(removable, needs Firebase Remote Config)*
   - [Image picker](#image-picker) *(removable)*
+  - [Mobile Ads](#mobile-ads) *(removable)*
   - [Firebase](#firebase) *(opt-in)*
   - [Onboarding replay](#onboarding-replay)
 - [Removability cheat sheet](#removability-cheat-sheet)
@@ -65,6 +66,7 @@ flutter run
 | FCM push with action buttons + background display | [`lib/modules/fcm/`](lib/modules/fcm/) | Yes |
 | Firebase Remote Config-driven update alert | [`lib/modules/app_upgrade/`](lib/modules/app_upgrade/) | Yes |
 | Image picker + compression (single / multi / camera / gallery) | [`lib/modules/image_picker/`](lib/modules/image_picker/) | Yes |
+| Google Mobile Ads (app open, banner, interstitial, rewarded, rewarded interstitial, native) | [`lib/modules/mobile_ads/`](lib/modules/mobile_ads/) | Yes |
 | Onboarding replay | [`lib/modules/onboarding/`](lib/modules/onboarding/) | Replaceable |
 | QR share popup (themed, scanner-safe) | [`lib/modules/qr/`](lib/modules/qr/) | Removable |
 | Device + package info cubits (loaded globally) | [`lib/modules/device_info/`](lib/modules/device_info/) [`lib/modules/package_info/`](lib/modules/package_info/) | Removable |
@@ -1877,6 +1879,104 @@ Compression is automatic (JPG re-encode for non-JPGs, dart:ui decode for HEIC on
 
 ---
 
+## Mobile Ads
+
+Path: [`lib/modules/mobile_ads/`](lib/modules/mobile_ads/). Google Mobile Ads SDK — all six ad types, each in its own sub-feature with a cubit, state, helper, and barrel.
+
+### Ad types
+
+| Type | Cubit | Notes |
+|------|-------|-------|
+| App Open | `AppOpenAdCubit` | Listens to `AppLifecycleState`, auto-shows when app foregrounded |
+| Banner | `BannerAdCubit` | Adaptive width; pass current screen width to `loadAd(width: …)` |
+| Interstitial | `InterstitialAdCubit` | Auto-reloads after dismissal |
+| Rewarded | `RewardedAdCubit` | `onRewarded` callback carries `RewardItem` |
+| Rewarded Interstitial | `RewardedInterstitialAdCubit` | Same pattern as rewarded |
+| Native (Templates) | `NativeTemplateAdCubit` | Uses Google's built-in `NativeTemplateStyle`; small or medium template |
+
+### Setup
+
+**1. Add your AdMob App IDs (native)**
+
+Android — `android/app/src/main/AndroidManifest.xml` inside `<application>`:
+```xml
+<meta-data
+  android:name="com.google.android.gms.ads.APPLICATION_ID"
+  android:value="ca-app-pub-XXXXXXXXXXXXXXXX~XXXXXXXXXX"/>
+```
+
+iOS — `ios/Runner/Info.plist`:
+```xml
+<key>GADApplicationIdentifier</key>
+<string>ca-app-pub-XXXXXXXXXXXXXXXX~XXXXXXXXXX</string>
+```
+
+**2. Initialise the SDK** once in `main.dart` before `runApp`:
+```dart
+await MobileAds.instance.initialize();
+```
+
+**3. Add ad unit IDs to `.env`**
+
+See the [Environment variables](#environment-variables-env) section for the full key list. `kDebugMode` selects `DEV_*` vs `PROD_*` keys automatically.
+
+### Use
+
+**Banner:**
+```dart
+BlocProvider(
+  create: (_) => BannerAdCubit()
+    ..loadAd(width: MediaQuery.sizeOf(context).width.toInt()),
+  child: const BannerAdView(),
+)
+```
+
+**Interstitial:**
+```dart
+// provide the cubit at a higher level so it survives navigation
+context.read<InterstitialAdCubit>().showAd(
+  onAdClosed: () { /* navigate or refresh */ },
+);
+```
+
+**Rewarded:**
+```dart
+context.read<RewardedAdCubit>().showAd(
+  onRewarded: (reward) { /* grant reward */ },
+  onClosed: () { /* cleanup */ },
+);
+```
+
+**App Open** — provide at the root so it persists across routes:
+```dart
+BlocProvider(
+  create: (_) => AppOpenAdCubit()
+    ..loadAd()
+    ..listenToAppStateChanges(),
+  child: const MyApp(),
+)
+```
+
+**Native template:**
+```dart
+BlocProvider(
+  create: (_) => NativeTemplateAdCubit(),
+  child: const NativeTemplateAdView(templateType: TemplateType.medium),
+)
+```
+
+### Remove
+
+- Delete [`lib/modules/mobile_ads/`](lib/modules/mobile_ads/).
+- Remove `google_mobile_ads: ^7.0.0` from `pubspec.yaml`.
+- Remove the `MobileAds.instance.initialize()` line from `main.dart`.
+- Remove ad unit ID keys from `.env`.
+- `dart run build_runner build`.
+
+No other files reference the module.
+
+---
+
 ## Firebase
 
 Opt-in. Without enabling, the app builds and runs without any Firebase code executing.
@@ -1931,6 +2031,7 @@ Customize the carousel pages in [`lib/modules/onboarding/presentation/views/onbo
 | App upgrade | `lib/modules/app_upgrade/` | `AppUpgradeCubit` provider, `AppUpgradeBootstrapper` wrap | `firebase_remote_config`, `flutter_widget_from_html` | — |
 | Auth | `lib/modules/auth/` | `AuthBloc` provider, `AuthBootstrapper` wrap | — | — |
 | Image picker | `lib/modules/image_picker/` | — | `image_picker`, `flutter_image_compress`, `image`, `path` | — |
+| Mobile Ads | `lib/modules/mobile_ads/` | `MobileAds.instance.initialize()` line | `google_mobile_ads` | ad unit ID keys |
 | Network/API | `lib/core/network/` | — | `dio` | `API_BASE_URL` |
 | Firebase (all) | `lib/core/services/firebase_service.dart` + every Firebase module | all Firebase + FCM + upgrade lines | every `firebase_*` | `FIREBASE_ENABLED` |
 | Theme playground | playground screen + tile + route | — | `flutter_colorpicker` (also drop `image_picker` if no other consumer) | — |

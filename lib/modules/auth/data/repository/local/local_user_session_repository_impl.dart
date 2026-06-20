@@ -1,57 +1,41 @@
 import 'dart:async';
-import 'dart:convert';
 
-import 'package:flutter_starter/core/di/injection.dart';
-import 'package:flutter_starter/core/utils/helpers/hive_helper.dart';
 import 'package:flutter_starter/core/utils/helpers/secure_storage_helper.dart';
-import 'package:flutter_starter/modules/auth/data/mapper/auth_user_mapper.dart';
-import 'package:flutter_starter/modules/auth/data/model/auth_user_model.dart';
-import 'package:flutter_starter/modules/auth/domain/entity/auth_user_entity.dart';
-import 'package:flutter_starter/modules/auth/domain/repository/local/user_session_store.dart';
+import 'package:flutter_starter/modules/auth/data/mapper/auth_session_mapper.dart';
+import 'package:flutter_starter/modules/auth/domain/entity/auth_session_entity.dart';
+import 'package:flutter_starter/modules/auth/domain/repository/local/local_user_session_repository.dart';
+import 'package:flutter_starter/modules/auth/utils/storage_helper/auth_hive.dart';
 import 'package:flutter_starter/modules/auth/utils/storage_helper/auth_storage_keys.dart';
+import 'package:flutter_starter/modules/user/user.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:injectable/injectable.dart';
 
-/// Default [UserSessionStore]: user JSON in Hive `app_box`, tokens in
-/// `flutter_secure_storage`. Both already wired in the starter — no setup.
-///
-/// JSON ↔ domain crosses the boundary through [AuthUserModel] +
-/// [AuthUserMapper] so the [AuthUserEntity] stays serialization-free.
-@LazySingleton(as: UserSessionStore)
-class HiveSecureSessionStore implements UserSessionStore {
-  HiveSecureSessionStore();
+@LazySingleton(as: LocalUserSessionRepository)
+class LocalUserSessionRepositoryImpl implements LocalUserSessionRepository {
+  LocalUserSessionRepositoryImpl();
 
-  /// Box / secure-storage / mapper are pulled lazily via [getIt] so unit tests
-  /// can swap registrations (or the whole [UserSessionStore]) without needing
-  /// to provide them up front.
-  late final AuthUserMapper _mapper = getIt<AuthUserMapper>();
-  late final Box<dynamic> _userBox = Hive.appBox;
-  late final SecureStorageHelper _secure = SecureStorageHelper.instance;
+  late final _userBox = Hive.authBox;
+  late final _secure = SecureStorageHelper.instance;
 
-  final StreamController<AuthUserEntity?> _controller =
-      StreamController<AuthUserEntity?>.broadcast();
+  final StreamController<UserEntity?> _controller =
+      StreamController<UserEntity?>.broadcast();
 
   @override
-  Future<void> saveUser(AuthUserEntity user) async {
-    final model = _mapper.toModel(user);
+  Future<void> saveUser(UserEntity user) async {
     await _userBox.put(
       AuthStorageKeys.loggedInUserKey,
-      jsonEncode(model.toJson()),
+      UserMapper.toRawJsonFromEntity(user),
     );
     _controller.add(user);
   }
 
   @override
-  Future<AuthUserEntity?> getUser() async {
+  Future<UserEntity?> getUser() async {
     final raw = _userBox.get(AuthStorageKeys.loggedInUserKey);
     if (raw is! String || raw.isEmpty) return null;
     try {
-      final model = AuthUserModel.fromJson(
-        jsonDecode(raw) as Map<String, dynamic>,
-      );
-      return _mapper.toEntity(model);
+      return UserMapper.fromRawJsonToEntity(raw);
     } catch (_) {
-      // Drop corrupt payload so the next login can write fresh data.
       await _userBox.delete(AuthStorageKeys.loggedInUserKey);
       return null;
     }
@@ -64,10 +48,33 @@ class HiveSecureSessionStore implements UserSessionStore {
   }
 
   @override
-  Stream<AuthUserEntity?> watchUser() async* {
+  Stream<UserEntity?> watchUser() async* {
     yield await getUser();
     yield* _controller.stream;
   }
+
+  @override
+  Future<void> saveAuthSession(AuthSessionEntity session) =>
+      _userBox.put(
+        AuthStorageKeys.authSessionKey,
+        AuthSessionMapper.toRawJsonFromEntity(session),
+      );
+
+  @override
+  Future<AuthSessionEntity?> getAuthSession() async {
+    final raw = _userBox.get(AuthStorageKeys.authSessionKey);
+    if (raw is! String || raw.isEmpty) return null;
+    try {
+      return AuthSessionMapper.fromRawJsonToEntity(raw);
+    } catch (_) {
+      await _userBox.delete(AuthStorageKeys.authSessionKey);
+      return null;
+    }
+  }
+
+  @override
+  Future<void> clearAuthSession() =>
+      _userBox.delete(AuthStorageKeys.authSessionKey);
 
   @override
   Future<void> saveAccessToken(String token) =>
@@ -104,17 +111,20 @@ class HiveSecureSessionStore implements UserSessionStore {
 
   @override
   Future<void> saveSession({
-    required AuthUserEntity user,
+    required UserEntity user,
     required String accessToken,
     required String refreshToken,
+    AuthSessionEntity? session,
   }) async {
     await saveTokens(accessToken: accessToken, refreshToken: refreshToken);
+    if (session != null) await saveAuthSession(session);
     await saveUser(user);
   }
 
   @override
   Future<void> clearSession() async {
     await Future.wait([clearAccessToken(), clearRefreshToken()]);
+    await clearAuthSession();
     await clearUser();
   }
 

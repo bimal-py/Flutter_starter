@@ -1,23 +1,18 @@
 import 'package:flutter_starter/core/errors/exceptions.dart';
-import 'package:flutter_starter/modules/auth/domain/entity/auth_user_entity.dart';
+import 'package:flutter_starter/modules/auth/domain/repository/local/local_user_session_repository.dart';
 import 'package:flutter_starter/modules/auth/domain/repository/remote/auth_repository.dart';
-import 'package:flutter_starter/modules/auth/domain/repository/local/user_session_store.dart';
-import 'package:injectable/injectable.dart';
+import 'package:flutter_starter/modules/user/user.dart';
 
-/// Working stub. Accepts any non-empty credentials and fabricates an
-/// [AuthUserEntity]; exercises the real Hive + secure-storage round-trip so the
-/// pipeline (bloc → bootstrapper → state) is testable end-to-end without a
-/// backend. **Swap before shipping** — write your own
-/// `@LazySingleton(as: AuthRepository)` class (REST / Firebase / Supabase /
-/// …) and delete this one.
+/// Dev stub. Accepts any non-empty credentials and fabricates a [UserEntity];
+/// exercises the real Hive + secure-storage round-trip so the pipeline
+/// (bloc → bootstrapper → state) is testable end-to-end without a backend.
 ///
-/// Google / Apple sign-in throw "not configured" — a real
-/// implementation wires `ThirdPartyAuthProvider` into its own constructor.
-@LazySingleton(as: AuthRepository)
+/// To use: annotate with `@LazySingleton(as: AuthRepository)` and remove
+/// that annotation from [RemoteAuthRepositoryImpl]. **Delete before shipping.**
 class InMemoryAuthRepository implements AuthRepository {
   InMemoryAuthRepository(this._store);
 
-  final UserSessionStore _store;
+  final LocalUserSessionRepository _store;
 
   @override
   Future<void> loginWithEmailAndPassword({
@@ -43,14 +38,12 @@ class InMemoryAuthRepository implements AuthRepository {
   Future<void> registerUser({
     required String email,
     required String password,
-    required String fullName,
-    String code = '',
-    String? phoneNumber,
+    required String code,
   }) async {
-    if (email.isEmpty || password.isEmpty || fullName.isEmpty) {
+    if (email.isEmpty || password.isEmpty) {
       throw const AuthenticationException(message: 'Missing required fields');
     }
-    await _persistFakeSession(email: email, displayName: fullName);
+    await _persistFakeSession(email: email);
   }
 
   @override
@@ -89,24 +82,21 @@ class InMemoryAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<AuthUserEntity?> getLoggedInUser() => _store.getUser();
+  Future<UserEntity?> getLoggedInUser() => _store.getUser();
 
   @override
-  Stream<AuthUserEntity?> watchUser() => _store.watchUser();
+  Stream<UserEntity?> watchUser() => _store.watchUser();
 
   @override
   Future<void> logout({bool wasStillAuthenticated = true}) =>
       _store.clearSession();
 
-  Future<void> _persistFakeSession({
-    required String email,
-    String? displayName,
-  }) async {
-    final user = AuthUserEntity(
-      id: email.hashCode.toRadixString(16),
+  Future<void> _persistFakeSession({required String email}) async {
+    final user = UserEntity(
+      id: email.hashCode,
       email: email,
-      displayName: displayName ?? email.split('@').first,
-      isEmailVerified: true,
+      firstName: email.split('@').first,
+      emailVerified: true,
     );
     await _store.saveSession(
       user: user,

@@ -12,15 +12,15 @@ class AppUrls {
 
   // Legal
   static const String privacyPolicy =
-      'https://bimalkhatri.com.np/callbreak-score-tracker/privacy-policy';
+      'https://bimalkhatri.com.np/flutter-starter/privacy-policy';
   static const String termsOfService =
-      'https://bimalkhatri.com.np/callbreak-score-tracker/terms-and-conditions';
+      'https://bimalkhatri.com.np/flutter-starter/terms-and-conditions';
 
   // Support
-  static const String supportEmail = 'support@example.com';
+  static const String supportEmail = 'khattribimal90@gmail.com';
 
   // Developer contact — shown on the About screen.
-  static const String developerEmail = 'you@example.com';
+  static const String developerEmail = 'khattribimal90@gmail.com';
   static const String developerGithub = 'https://github.com/bimal-py';
   static const String developerWebsite = 'https://bimalkhatri.com.np';
 

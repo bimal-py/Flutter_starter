@@ -15,9 +15,7 @@ class RegisterUserUseCase extends UseCase<void, RegisterUserParams> {
   FutureOr<void> execute(RegisterUserParams params) => _repository.registerUser(
     email: params.email,
     password: params.password,
-    fullName: params.fullName,
     code: params.code,
-    phoneNumber: params.phoneNumber,
   );
 }
 
@@ -25,17 +23,13 @@ class RegisterUserParams extends Equatable {
   const RegisterUserParams({
     required this.email,
     required this.password,
-    required this.fullName,
-    this.code = '',
-    this.phoneNumber,
+    required this.code,
   });
 
   final String email;
   final String password;
-  final String fullName;
   final String code;
-  final String? phoneNumber;
 
   @override
-  List<Object?> get props => [email, password, fullName, code, phoneNumber];
+  List<Object?> get props => [email, password, code];
 }

@@ -1,1 +1,1 @@
-export 'auth_user_mapper.dart';
+export 'auth_session_mapper.dart';
