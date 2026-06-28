@@ -1965,10 +1965,37 @@ BlocProvider(
 )
 ```
 
+### Self-promotion (house ads)
+
+Path: [`lib/modules/mobile_ads/features/self_promotion/`](lib/modules/mobile_ads/features/self_promotion/). Cross-promotes your **other apps** with cards that look like real ads, so an ad slot is **never empty** while AdMob loads or fails to fill — no shrink, no blank space.
+
+- **Registry** — `utils/constants/self_promotion_apps.dart` lists each app (`SelfPromotionApp`: name, tagline, brand colour, logo asset, `…/share` URL). Logos live in `assets/images/ads/`, mapped in `self_promotion_assets.dart`. (Static config, so the feature is utility-shaped: `domain/entity` + `utils/constants` + `presentation/widgets`, no data/repository layer.)
+- **Widgets** — a shared `SelfPromotionNativeCard` (grid-cell shape) and `SelfPromotionBanner` (banner shape), plus per-app thin wrappers under `widgets/<app>/` (`<App>NativeAdWidget` / `<App>BannerWidget`). Tapping opens the app's store page in the external browser via `url_launcher`.
+- **Random fallback** — `SelfPromotionNativeAd` / `SelfPromotionBannerAd` pick a random promoted app once (stable for their lifetime). Drop these in when an AdMob ad isn't ready:
+
+```dart
+// Fall an AdMob slot back to a house ad so it's never empty:
+adLoaded ? AdWidget(ad: ad) : const SelfPromotionNativeAd();
+```
+
+Add an app: drop a logo into `assets/images/ads/`, add an entry to `SelfPromotionApps`, and (optionally) a `widgets/<app>/` wrapper. A host app excludes itself by filtering `SelfPromotionApps.all` on `id`.
+
+### Ad visibility — `AdsController`
+
+[`utils/helpers/ads_controller.dart`](lib/modules/mobile_ads/utils/helpers/ads_controller.dart) is the single source of truth for whether ads show. Gate every banner/native widget on it:
+
+```dart
+if (!AdsController.instance.shouldShow()) return const SizedBox.shrink();
+```
+
+- **Master switch** — `AdsController.instance.enabled = false` kills all non-forced ads at once (wire to remote config / a debug toggle / an emergency off).
+- **Subscription-ready** — add any "no ads" entitlement (a rewarded 12-hour window, a **premium in-app subscription**, a lifetime unlock) to the `adsRemoved` getter. One line, and every ad in the app obeys. It's a `ChangeNotifier`, so widgets rebuild the instant it flips.
+- **`forceShow`** — `shouldShow(forceShow: true)` bypasses the switch and entitlements, for rewarded gates that must keep working (a subscription shouldn't silence the "watch ad to unlock" flow).
+
 ### Remove
 
-- Delete [`lib/modules/mobile_ads/`](lib/modules/mobile_ads/).
-- Remove `google_mobile_ads: ^7.0.0` from `pubspec.yaml`.
+- Delete [`lib/modules/mobile_ads/`](lib/modules/mobile_ads/) (including `features/self_promotion/`).
+- Remove `google_mobile_ads: ^7.0.0` from `pubspec.yaml`, plus `assets/images/ads/` and its logos.
 - Remove the `MobileAds.instance.initialize()` line from `main.dart`.
 - Remove ad unit ID keys from `.env`.
 - `dart run build_runner build`.

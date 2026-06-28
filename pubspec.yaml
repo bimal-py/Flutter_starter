@@ -112,6 +112,7 @@ flutter:
     - .env
     - assets/images/
     - assets/images/logos/
+    - assets/images/ads/
 
   # Inter is the default Latin face. NotoSansDevanagari is paired for
   # Nepali/Hindi via per-language scaling — see lib/core/text/font_scale.dart.
