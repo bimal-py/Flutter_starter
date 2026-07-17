@@ -93,6 +93,10 @@ dependencies:
 
   # Ads (delete with lib/modules/mobile_ads/ if not using Google Mobile Ads)
   google_mobile_ads: ^7.0.0
+  # iOS App Tracking Transparency: shows the ATT prompt so AdMob can use the
+  # IDFA for personalised ads. No-op on Android. Imported only inside
+  # lib/modules/mobile_ads/.
+  app_tracking_transparency: ^2.0.6
 
   # Utils
   intl: ^0.20.2

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +9,7 @@ import 'package:flutter_starter/app/hive_bootstrap.dart';
 import 'package:flutter_starter/common/common.dart';
 import 'package:flutter_starter/core/core.dart';
 import 'package:flutter_starter/modules/fcm/fcm.dart';
+import 'package:flutter_starter/modules/mobile_ads/mobile_ads.dart';
 import 'package:flutter_starter/modules/notifications/notifications.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
@@ -41,6 +44,14 @@ Future<void> main() async {
       designHeight: 691,
       child: StarterApp(),
     ),
+  );
+
+  // Mobile Ads SDK — deferred to after the first frame so the app is
+  // foregrounded/active when the initializer gathers UMP consent and shows the
+  // iOS ATT prompt (both are silently dropped if requested before that).
+  // Non-blocking — the app works without ads and init failures are swallowed.
+  WidgetsBinding.instance.addPostFrameCallback(
+    (_) => unawaited(MobileAdsInitializer.instance.init()),
   );
 
   await FirebaseService.setupCrashlyticsAndAnalytics();
